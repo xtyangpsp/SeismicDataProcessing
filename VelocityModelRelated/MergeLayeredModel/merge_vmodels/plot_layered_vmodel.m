@@ -51,7 +51,7 @@ if(strcmp(plotornot,'yes') || strcmp(plotornot,'plotyes') || strcmp(plotornot,'y
 
     xlim([min([min(vmodel(:,1)), min(vmodel(:,2)), min(vmodel(:,3))])-0.5, ...
         (max([max(vmodel(:,1)), max(vmodel(:,2)), max(vmodel(:,3))])+0.5)]);
-    legend('vp','vs','density');
+    legend('vp','vs','density','Location','south');
     xlabel('Velocity (km/s)');ylabel('Depth (km)');
 % else
 %     disp('!!! Caution: Plot is suppressed.');

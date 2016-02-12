@@ -1,4 +1,4 @@
-function merge_layered_vmodels(modelfile1,modelfile2,outfilename,plotornot,extractstation)
+function merge_layered_vmodels(modelfile1,modelfile2,outfilename,plotornot,extractstation,yrange1,yrange2,yrange3)
 %USAGE:
 %merge_layered_vmodels(modelfile1,modelfile2,outfilename): plot all
 %stations, not good for data with too many stations. Use '-' for outfile name to turn off save to file.
@@ -8,6 +8,9 @@ function merge_layered_vmodels(modelfile1,modelfile2,outfilename,plotornot,extra
 %
 %merge_layered_vmodels(modelfile1,modelfile2,outfilename,plotornot,extractstation):
 %only merge specified station by extractstation. Use '-' for outfile name to turn off save to file.
+%
+%merge_layered_vmodels(modelfile1,modelfile2,outfilename,plotornot,extractstation,yrange)
+%specify y range for plot, ignore when ploting option is off.
 %
 %1. Modelfile1 is dominant. only use modelfile2 when modelfile1 does not have
 %coverage. for satations included in both model files, merge them.
@@ -32,15 +35,36 @@ singlestation=0;
 if(nargin==3)
     plotornot='yes';
     singlestation=0;
+    yrangeauto1=1;
+    yrangeauto2=1;
+    yrangeauto3=1;
 elseif(nargin==4)
     singlestation=0;
-elseif(nargin==5) && (~strcmp(extractstation,'-'))
+    yrangeauto=1;
+    yrangeauto2=1;
+    yrangeauto3=1;
+elseif(nargin>=5) && (~strcmp(extractstation,'-'))
     disp(['Merge-single-station mode is on. Only merge model for: ',extractstation]);
     singlestation=1;
+    yrangeauto=1;
+    yrangeauto2=1;
+    yrangeauto3=1;
+    if(nargin>=6)
+        yrangeauto1=0;
+        if(nargin>=7)
+            yrangeauto2=0;
+            if(nargin==8)
+                yrangeauto3=0;
+            end
+        end
+    end
 end
+
 savetofileflag=1;
 %use '-' for outfile name to turn off save to file.
 if(strcmp(outfilename,'-'));savetofileflag=0;end
+
+if(strcmp(plotornot,'yes') || strcmp(plotornot,'plotyes') || strcmp(plotornot,'yesplot'));close all;end
 
 [model1,header1]=read_layered_vmodel(modelfile1);
 [model2,header2]=read_layered_vmodel(modelfile2);
@@ -94,16 +118,18 @@ for k=1:nstation
     sta=char(stations_unique(k));
     if(foundin1) && (foundin2)
         if(strcmp(plotornot,'yes') || strcmp(plotornot,'plotyes') || strcmp(plotornot,'yesplot'))
-            close all;
             figure(k);
             subplot(1,3,1)
             [z1,vmodel1]=plot_layered_vmodel(m1);
-            title([sta,', ',modelfile1]);
-%              ylim([0 60]);
+            %title([sta,', ',modelfile1]);
+            title([sta,', Model 1']);
+            if(~yrangeauto1); ylim(yrange1);end
+            
             subplot(1,3,2)
             [z2,vmodel2]=plot_layered_vmodel(m2);
-            title([sta,', ',modelfile2]);
-            ylim([0 200]);
+            %title([sta,', ',modelfile2]);
+            title([sta,', Model 2']);
+            if(~yrangeauto2); ylim(yrange2);end
         else
             [z1,vmodel1]=plot_layered_vmodel(m1,'noplot');
             [z2,vmodel2]=plot_layered_vmodel(m2,'noplot');
@@ -150,7 +176,7 @@ for k=1:nstation
         subplot(1,3,3);
         plot_layered_vmodel(vmodel_merged);
         title([sta,', merged']);
-        ylim([0 200]);
+        if(~yrangeauto3); ylim(yrange3);end
     end
 %     disp(['Saving merged model for station: ',sta,' ... [',num2str(k),'/',num2str(nstation)]);
     if(savetofileflag)
