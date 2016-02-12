@@ -1,0 +1,165 @@
+#input parameters.
+use_wfdisc_in false    # else if false, wfprocess table will be used.
+start_time_is_origin false
+radial_channel_code IR
+transverse_channel_code IT
+use_vertical_chan true
+vertical_channel_code IZ
+
+rms_kill_threshold 20.0
+
+# Trace_mdl should include: time, endtime, nsamp, samprate, datatype, dir, dfile, and foff
+input_mdl_wfdisc_nez2rtz	&Tbl{
+    sta string
+    evid integer
+    endtime real
+    datatype string
+    dir string
+    dfile string
+    foff integer
+    chan string
+    time real
+    nsamp integer
+    samprate real
+    sitechan.hang real
+    sitechan.vang real
+    hang real
+    vang real
+    sta_lat real
+    sta_lon real
+    sta_elev real
+    source_lat real
+    source_lon real
+    source_depth real
+    source_time real
+    atime real
+}
+input_mdl_wfdisc_rtz2nez &Tbl{
+    sta string
+    chan string
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    evid int
+    orid int
+    site.lat real
+    site.lon real
+    site.elev real
+    origin.lat real
+    origin.lon real
+    origin.depth real
+    origin.time real
+    dir string
+    dfile string
+    arrival.time real
+}
+input_mdl_wfprocess_nez2rtz	&Tbl{
+    sta string
+    evid integer
+    wfdisc.sta string
+    wfdisc.chan string
+    wfdisc.time real
+    wfdisc.jdate integer
+    wfdisc.endtime real
+    endtime real
+    wfdisc.nsamp integer
+    wfdisc.samprate real
+    wfdisc.calib real
+    wfdisc.calper real
+    wfdisc.datatype string
+    wfdisc.dir string
+    wfdisc.dfile string
+    wfdisc.foff integer
+    sta string
+    chan string
+    time real
+    nsamp integer
+    samprate real
+    sitechan.hang real
+    sitechan.vang real
+    hang real
+    vang real
+    site.lat real
+    site.lon real
+    site.elev real
+    origin.lat real
+    origin.lon real
+    origin.depth real
+    origin.time real
+}
+input_mdl_wfprocess_rtz2nez	&Tbl{
+    sta string
+    evid integer
+	pwfid int
+	dir string
+	dfile string
+    time real
+    endtime real
+    nsamp integer
+    samprate real
+	datatype string
+	timetype string
+	foff integer
+    chan string
+    site.lat real
+    site.lon real
+    site.elev real
+    origin.lat real
+    origin.lon real
+    origin.depth real
+    origin.time real
+}
+save_assoc_mdl &Tbl{
+assoc.sta string
+assoc.orid int
+assoc.phase string
+assoc.vmodel string
+assoc.timedef string
+}
+
+save_arrival_mdl &Tbl{
+arrival.sta string
+arrival.chan string
+arrival.time real
+arrival.iphase string
+}
+output_wfdisc_mdl	&Tbl{
+    sta string
+    chan string
+    time real
+    endtime real
+    nsamp integer
+    samprate real
+    datatype string
+    dir string
+    dfile string
+}
+output_wfprocess_mdl	&Tbl{
+    pwfid integer
+    time real
+    endtime real
+    nsamp integer
+    samprate real
+    dir string
+    dfile string
+    timetype string
+    wfprocess.algorithm string
+}
+
+out_chan_code_x1 IE
+out_chan_code_x2 IN
+out_chan_code_x3 IZ
+
+# These are surface velocities for P and S
+# Used only in fst mode
+vp0		5.6
+vs0		3.28
+
+save_wfdisc_table true
+save_wfprocess_table true
+# All 3C data are written to a single directory/dfile with these names
+OutPutDirectory ./wf3c10
+OutPutFileNameBase RotatedData
+
+pf_revision_time 1418576266

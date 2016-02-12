@@ -1,0 +1,154 @@
+Attribute U11
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_11 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 1,1 standard matrix indexing.
+	}
+        ;
+Attribute U21
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_21 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 2,1 standard matrix indexing.
+	}
+        ;
+Attribute U31
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_31 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 3,1 standard matrix indexing.
+	}
+        ;
+Attribute U12
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_12 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 1,2 standard matrix indexing.
+	}
+        ;
+Attribute U22
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_22 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 2,2 standard matrix indexing.
+	}
+        ;
+Attribute U32
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_32 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 3,2 standard matrix indexing.
+	}
+        ;
+Attribute U13
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_13 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 1,3 standard matrix indexing.
+	}
+        ;
+Attribute U23
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_23 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 2,3 standard matrix indexing.
+	}
+        ;
+Attribute U33
+	Real (10)
+	Format ( "%10.7f" )
+	Null ( "-9.9999999" )
+	Description ( "U_33 component of Three-Component transformation matrix" )
+	Detail {
+            Three Component Seismogram data require a transformation matrix
+                to link current orientation to standard geographic
+                coordinates.  This is component 3,3 standard matrix indexing.
+	}
+        ;
+
+Attribute pwfid
+	Integer (8)
+	Format ( "%8d" )
+	Null ( "-1" )
+	Range ( "wfid > 0" )
+	Description ( "processed waveform id" )
+	Detail {
+		Comparable to wfid used in wfdisc, but this integer
+		key is the primary index of the core processing waveform
+		table and is used for association and joining of 
+		ancillary tables created by all processing algorithms
+		that use this schema.
+	}
+	;
+
+Attribute cardinal
+	Integer (2)
+	Format ( "%2d" )
+	Null ( "-1" )
+	Range ( "cardinal >= 0" )
+	Description ( "T or F: is orientation cardinal")
+	Detail {
+            This is a boolean (1 is true 0 is false).  True means
+            the orientation of related data is in cardinal directions.
+            That is 1=E,2=N, and 3 is Z up.
+	}
+	;
+
+Attribute ortho
+	Integer (2)
+	Format ( "%2d" )
+	Null ( "-1" )
+	Range ( "ortho >= 0" )
+	Description ( "T or F: are components orthogonal")
+	Detail {
+            This is a boolean (1 is true 0 is false).  True means
+            the components are in orthogonal directions.
+	}
+	;
+
+Relation tmatrix
+        Fields ( pwfid U11 U21 U31 U12 U22 U32 U13 U23 U33 cardinal ortho lddate)
+	Primary ( pwfid )
+	Foreign ( pwfid ) 
+	Description ( "Saves attributes for transformation matrix of three-component seismograms" )
+	Detail {
+            Data stored as three component seismograms in a matrix carry
+            a transformation matrix that defines how the components are
+            related to standard coordinates.  This table stores the
+            components of that transformation matrix to allow rotated
+            data to be stored. 
+	}
+	;
+

@@ -1,0 +1,69 @@
+.TH RFrotate 1
+.SH NAME
+RFrotate - rotate waveforms to Radial/Transverse/Vertical system
+.SH SYNOPSIS
+.nf
+RFrotate dbin dbout [-lqt|-fst  -pf pffile]
+.fi
+.SH DESCRIPTION
+In conventional receiver function processing it is standard practice 
+to rotate data from cardinal directions to RTZ or LQT coordinates.   
+This program does that with an additional option to use 
+Kennett's free surface transformation matrix.   
+.LP
+Program takes data from database dbin.   The input database must be
+complete.   The program takes the full event->origin->assoc->arrival view
+and joins it to the view wfdisc->sitechan->site.   Any unassociated rows
+in this construct will be dropped.   
+.LP
+The output is five database tables:  wfdisc, wfprocess, tmatrix,
+evlink, and sclink.
+wfdisc is standard css3.0.  wfprocess,tmatrix, sclink, and evlink are
+intimately related tables used for three component processing.   They 
+are used to store transformed data and save the transformation matrix.   
+This makes it possible to later restore the data to standard geographic
+coordinates.   
+.LP
+This code was developed to provide input data for the program RFeditor, which
+can be used to interactively edit receiver functions.   Because that code
+uses common receiver gathers with events from all azimuths it is essential
+to rotate the data to one of the standard rotated frames for manual
+editing to work.  The mechanism is, however, general enough that 
+this could also provide a useful way to put raw data into one of the 
+common rotated systems for later processing.  Be warned, however, that
+data indexed with wfdisc will no longer link to any css3.0 tables
+that relate to channels since the channel names in wfdisc would normally
+be redefined.  
+.SH OPTIONS
+.IP -lqt
+If this options is specified the data are rotated to my (GLP) version 
+of LQT coordinates instead of the default RTZ.  Sign of the R and T 
+coordinates is the issue - see rotate method in the ThreeComponentSeismogram
+object description.
+.IP -fst
+If this option is specified the data are rotated with Kennett's 
+free surface transformation matrix.  Note this is a nonorthogonal 
+coordinate system.
+.IP -pf
+Use pffile instead of the default RFrotate.pf.
+.SH PARAMETER FILE
+.LP
+Two parameters, \fI3CWaveformDirectory\fR and \fI3CDataFile\fR, define where
+the rotated, three-component waveform are stored.  All waveforms from each 
+run of this program are written to a single file with this pair acting 
+directly like dir/dfile in css3.0.   Each waveform wfprocess record will
+have a different foff attribute. 
+.LP
+\fIoutput_channel_codes\fR is a Tbl that defines the channel codes
+assigned in wfdisc to each of the rotated components.   From first 
+to last the order is:  1 - transverse, 2 - radial, 3 - vertical(longitudinal).
+.LP
+Two parameters, \fIvp0\fR and \fIvs0\fR are only referenced if the
+-fst option is used.  The free surface transformation equations required
+specifying surface P and S velocities, which is what these should define.
+.SH "BUGS AND CAVEATS"
+.LP
+The scalar output data is appended to the E component input data file.  
+This is a odd and unstable method that should be done more elegantly. 
+.SH AUTHOR
+Gary L. Pavlis and Xiaotao Yang, Indiana University
