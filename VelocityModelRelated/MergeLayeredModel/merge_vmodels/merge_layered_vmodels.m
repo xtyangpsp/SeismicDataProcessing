@@ -36,6 +36,7 @@ elseif(nargin==4)
     singlestation=0;
 elseif(nargin==5) && (~strcmp(extractstation,'-'))
     disp(['Merge-single-station mode is on. Only merge model for: ',extractstation]);
+    singlestation=1;
 end
 savetofileflag=1;
 %use '-' for outfile name to turn off save to file.
@@ -102,7 +103,7 @@ for k=1:nstation
             subplot(1,3,2)
             [z2,vmodel2]=plot_layered_vmodel(m2);
             title([sta,', ',modelfile2]);
-            ylim([0 60]);
+            ylim([0 200]);
         else
             [z1,vmodel1]=plot_layered_vmodel(m1,'noplot');
             [z2,vmodel2]=plot_layered_vmodel(m2,'noplot');
@@ -149,7 +150,7 @@ for k=1:nstation
         subplot(1,3,3);
         plot_layered_vmodel(vmodel_merged);
         title([sta,', merged']);
-        ylim([0 60]);
+        ylim([0 200]);
     end
 %     disp(['Saving merged model for station: ',sta,' ... [',num2str(k),'/',num2str(nstation)]);
     if(savetofileflag)
