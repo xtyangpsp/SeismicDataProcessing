@@ -1,0 +1,14 @@
+BIN=const_layer_basin_model
+PF=const_layer_basin_model.pf
+SUBDIR=/contrib
+#MAN1=		# man pages for commands
+cxxflags=-g
+ldlibs=-lgclgrid -lgeocoords -lseispp $(DBLIBS) -lperf -lm
+ANTELOPEMAKELOCAL = $(ANTELOPE)/contrib/include/antelopemake.local
+include $(ANTELOPEMAKE)
+include $(ANTELOPEMAKELOCAL)
+CXXFLAGS += -I$(BOOSTINCLUDE)
+OBJS=const_layer_basin_model.o GriddedBasinModel.o
+$(BIN) : $(OBJS)
+	$(RM) $@
+	$(CXX) $(CCFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

@@ -1,0 +1,5 @@
+This is a work in progress designed originally to build layered models for 
+the oiink project.  Later (April 2014) realized this could be generalized
+to be more generally useful.  In particular, I want to use some of the 
+pieces of this to build a CRUST1.0 interface.   Would want to use this
+for USArray data to compute statics and for 1d modeling.   
