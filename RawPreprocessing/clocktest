@@ -1,0 +1,9 @@
+#!/bin/csh
+set day=$1
+echo Checking for clock locks on 2015 day $day
+cd ~/oiink/rtlog/2015/$day
+foreach sta (????)
+echo $sta
+grep "CLOCK IS LOCKED" $sta/log | nl | tail -1
+end
+

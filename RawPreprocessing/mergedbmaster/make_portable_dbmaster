@@ -1,0 +1,13 @@
+#!/bin/csh
+\rm -rf portable_dbmaster
+mkdir portable_dbmaster
+cp -r dbmaster/* portable_dbmaster
+#
+# this depends on current directory structure on femur
+#
+mkdir portable_dbmaster/TA
+cp -r /export/home/field/anf/dbmaster/response portable_dbmaster/TA
+foreach t (instrument stage)
+    dbset portable_dbmaster/oiink.$t dir '*' 'patsub(dir,"/export/home/field/anf/dbmaster/response/","./TA/response/")'
+end
+tar cvfh dbmaster.tar ./portable_dbmaster

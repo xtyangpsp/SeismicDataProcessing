@@ -1,0 +1,3 @@
+#!/bin/csh
+# Use this script to run dlmon remotely on a X display
+dlmon -state Single -model reftek localhost localhost

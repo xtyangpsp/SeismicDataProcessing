@@ -1,0 +1,2 @@
+#!/bin/csh
+orbstat -s localhost | grep $1
