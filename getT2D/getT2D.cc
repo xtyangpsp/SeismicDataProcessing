@@ -11,8 +11,6 @@ April 28, 2015
 Xiaotao Yang
 @Indiana University
 
-2016.03.01, Xiaotao Yang: fixed bug, old version forgot to subtract scatter depth from EQUATORIAL_EARTH_RADIUS
-
 */
 #include <string>
 #include "ray1d.h"  //libseispp library
@@ -124,10 +122,10 @@ int main(int argc, char **argv)
             szray=s_ray.depth(i);
             praydelta=p_ray.delta[i];
             sraydelta=s_ray.delta[i];
-             // double time_s=s_ray.t[i]+(praydelta-sraydelta)*
-//                           		pslow*EQUATORIAL_EARTH_RADIUS;
             double time_s=s_ray.t[i]+(praydelta-sraydelta)*
-             		pslow*(EQUATORIAL_EARTH_RADIUS-fabs(pzray));
+                           		pslow*EQUATORIAL_EARTH_RADIUS;
+            // double time_s=s_ray.t[i]+(praydelta-sraydelta)*
+//              		pslow*(EQUATORIAL_EARTH_RADIUS-fabs(pzray));
             double time_p=p_ray.t[i];
             double lag=time_s - time_p;
             		
