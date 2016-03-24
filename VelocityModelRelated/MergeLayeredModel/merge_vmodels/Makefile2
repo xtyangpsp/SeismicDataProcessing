@@ -1,0 +1,11 @@
+BIN=merge_vmodels
+SUBDIR=/contrib
+ldlibs=-lseispp -lgclgrid -lgeocoords $(DBLIBS) -L$(BOOSTLIB) -lperf
+ANTELOPEMAKELOCAL = $(ANTELOPE)/contrib/include/antelopemake.local
+include $(ANTELOPEMAKE)
+include $(ANTELOPEMAKELOCAL)
+CXXFLAGS += -I$(BOOSTINCLUDE)
+OBJS=merge_vmodels.o 
+$(BIN) : $(OBJS)
+	$(RM) $@
+	$(CXX) $(CCFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
