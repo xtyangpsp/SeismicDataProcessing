@@ -16,7 +16,7 @@ using namespace SEISPP;
 /* This modified version is designed to convert surface data in gclgrid format (j,i,attribute) to geographic points with the format of (lon, lat, attribute).
 
 Changes:
-1. program name is changed from surf_vtk_converter to gclsurf2geo
+1. program name is changed from surf_vtk_converter to gclcart2geo
 2. gclgrid information is read in from grid file directly without need of Antelope database.
 
 2016.04.06   XT Yang
@@ -25,7 +25,7 @@ Changes:
 
 void usage()
 {
-	cerr << "gclsurf2geo gridfile [-o outfile | -ix x_interval | -iy y_interval | "<<endl
+	cerr << "gclcart2geo gridfile [-o outfile | -ix x_interval | -iy y_interval | "<<endl
 		 << "            -f infile_format_code | -v] < infile"<<endl
 	      << "* output is stdout"<<endl
 	      << "* gridfile shoule be 3d grid basename without extension."<<endl
