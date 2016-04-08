@@ -89,6 +89,11 @@ int main(int argc, char **argv)
 		}
 	}
 	
+	if(!savetofile)
+	{
+		SEISPP_verbose=false;
+	}
+	
 	if(formatcode!=0)
 	{
 		if(!y_interval_set && !x_interval_set)
@@ -138,19 +143,26 @@ int main(int argc, char **argv)
         while(getline(cin,temp_line))
         {
          	if(SEISPP_verbose) cerr<<"Working on line number: "<<nl<<endl;
-         	if(std::strcmp((char *)temp_line[0],"#")==0) continue;
+         	stringstream line(temp_line);
+         	if(line.str()[0]=='#') 
+         	{
+         		//cout<<"comment line"<<endl;
+         		continue;
+         	
+         	}
          	if(formatcode==2)
          	{
-         		if(std::strcmp((char *)temp_line[0],"F")==0)
+         		if(line.str()[0]=='F')
          			continue;
-         		else if(std::strcmp((char *)temp_line[0],"-")==0 && 
-         				std::strcmp((char *)temp_line[1],">")==0)
+         		else if(line.str()[0]=='-' && 
+         				line.str()[1]=='>')
          		{
          			fprintf(fhout,">\n");
          			continue;
          		}
          	}
-         	stringstream line(temp_line);
+         	//cout<<temp_line<<endl;
+         	
            	switch(formatcode)
            	{
            		case 0:
@@ -160,6 +172,7 @@ int main(int argc, char **argv)
            		case 1:
            			line>>x;
            			line>>y;
+           			//cout<<nl<<": "<<x<<", "<<y<<endl;
            			xj=static_cast<int>(y/y_interval);
            			xi=static_cast<int>(x/x_interval);
            			break;
