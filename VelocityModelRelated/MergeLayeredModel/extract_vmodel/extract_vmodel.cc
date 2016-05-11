@@ -14,12 +14,16 @@ This program extracts 1-d layered model for each point (usually station) with ou
 Xiaotao Yang @IU
 2016.2.09
 
+2016.5.11 XT Yang @ IU
+	Added option of outputing to other files instead of stdout. In this case, the program generate a log file containing status of lookup for each station (0: failed; 1: found).
+
 */
 void usage()
 {
-    cerr << "extract_vmodel gclgridmodelfile [-tp|--top-pad [pad_length]] < pointlistfile"<<endl
-        << "  pointlistfile contains: sta  lat lon elev(km) - normally from site table"<<endl
-        << "  -tp|--top-pad: apply top pad with specified pad_length, default 5.0."<<endl;
+    cerr << "extract_vmodel gclgridmodelfile [-tp|--top-pad pad_length -o outfile -v] < pointlistfile"<<endl
+        << " * pointlistfile contains: sta  lat lon elev(km) - normally from site table"<<endl
+        << " * if use other output file, output the status to sdout: sta 0(failed)|1(found)"<<endl
+        << " * -tp|--top-pad: apply top pad with specified pad_length, default 5.0."<<endl;
     exit(-1);
 }
 void pad_top_model(GCLvectorfield3d& f, double pad_length)
@@ -43,10 +47,13 @@ void pad_top_model(GCLvectorfield3d& f, double pad_length)
 bool SEISPP::SEISPP_verbose(true);
 int main(int argc, char **argv)
 {
-    if(argc!=2) usage();
+    if(argc<2) usage();
     string modelgridfile(argv[1]);
+    string outfile("out.txt");
     double pad_length(5.0);
     bool apply_top_pad(false);
+    ofstream outstrm;
+	bool out_to_other(false);
     int i;
     for(i=2;i<argc;++i)
     {
@@ -58,11 +65,32 @@ int main(int argc, char **argv)
             else pad_length=atof(argv[i]);
             apply_top_pad=true;
         }
+        else if(sarg=="-o")
+		{
+			++i;
+			if(i>=argc) usage();
+			out_to_other=true;
+			outfile=string(argv[i]);
+		}
+		else if(sarg=="-v")
+			SEISPP_verbose=true;
         else
             usage();
     }
     
-    
+    if(out_to_other)
+    {
+    	try
+    	{outstrm.open(outfile.c_str(),ios::out);}catch (ios::failure& var)
+			{
+				cerr << "Open failure on outfile="<<outfile
+					<<endl;
+					
+				if(SEISPP_verbose) cerr<< "System message:  "
+					<< var.what() <<endl;
+				usage();
+			}
+    }
     try {
         int k,kk;
         //Crust1_0 c1p0;
@@ -102,11 +130,15 @@ int main(int argc, char **argv)
             //bool use_only_crust1p0(false);
             if(vmodel.lookup(cp.x1,cp.x2,cp.x3))
             {
-                cerr << "Lookup failed for sta "<<sta<<endl
+                if(SEISPP_verbose) cerr << "Lookup failed for sta "<<sta<<endl
                     << "Skipped this station"<<endl;
                 //use_only_crust1p0=true;
+                if(out_to_other) cout<<sta<<"    "<<0<<endl;
                 continue;
             }
+            else
+            	if(out_to_other) cout<<sta<<"    "<<1<<endl;
+            
             int position[3];
             //if(!use_only_crust1p0)
             //{
@@ -118,9 +150,16 @@ int main(int argc, char **argv)
                 for(int l=0;l<4;++l)
                     modeldata(kk,l)=vmodel.val[position[0]][position[1]][k][l];
             }
-            cout << sta << " " << outsize<<endl;
-            cout << modeldata;
-
+            if(out_to_other) 
+            {
+            	outstrm << sta << " " << outsize<<endl;
+            	outstrm << modeldata;
+            }
+            else
+            {
+            	cout << sta << " " << outsize<<endl;
+            	cout << modeldata;
+			}
             //DEBUG
         }
     }catch(SeisppError& serr)
