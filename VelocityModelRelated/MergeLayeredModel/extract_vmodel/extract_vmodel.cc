@@ -113,11 +113,11 @@ int main(int argc, char **argv)
         {
             stringstream ss(inpline);
             string sta;
-            double lat,lon,latdeg,londeg,elev;
+            double lat,lon,latdeg,londeg; //,elev;
             ss >> sta;
             ss >> latdeg;
             ss >> londeg;
-            ss >> elev;
+            //ss >> elev;
             /* Find this position in the GCLgrid and extract the 
                vector of data for the basin model for each layer.
                A bit odd because we only use the lookup function
