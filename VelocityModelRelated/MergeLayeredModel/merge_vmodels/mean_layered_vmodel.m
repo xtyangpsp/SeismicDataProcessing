@@ -1,4 +1,7 @@
 function meanmodel=mean_layered_vmodel(modelfile)
+%USAGE:
+%meanmodel=mean_layered_vmodel(modelfile)
+%
 %Derive mean model of the input layered model. The modelfile should have
 %the following format for each point:
 % LG19 8

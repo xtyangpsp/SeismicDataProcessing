@@ -1,0 +1,14 @@
+function [vmodel,header]=get_layered_vmodel(vmodel_all,header_all,station)
+%vmodel: model array (nlayers x 4), columns 1-4 for vp, vs, density, and thickness.
+
+%set initial value;
+nl=header_all(1).nlayers;
+vmodel=zeros(1,nl,4);
+header=struct('station',station,'nlayers',nl);
+
+for i=1:nl
+    
+    
+end
+
+end

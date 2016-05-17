@@ -4,7 +4,7 @@ function checkerboard_sine3d(ngridx,ngridy,basevalues,hscales,vscales,outfilebas
 %USAGE: 
 %checkerboard_sine3d(ngridx,ngridy,basevalue,hscale,vscale,outfilebase)
 %checkerboard_sine3d(ngridx,ngridy,basevalue,hscale,vscale,outfilebase,chktype)
-%               chktype: standard or sin3d
+%               chktype: standard or sine3d
 %
 %The following core code and the concept are originally from Yinzhi Wang: 
 %checksinegrid=bsxfun(@(x,y)(sin((x+y)*4)+sin((x-y)*4))*15,-pi:0.1:1.52*pi,(-pi:0.1:3.05*pi)')';

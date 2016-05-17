@@ -124,6 +124,7 @@ int main(int argc, char **argv)
             VelocityModel_1d rho=c1p0.model(latdeg,londeg,string("Density"));
             //DEBUG
             //cout << "Crust1.0 model"<<endl;
+            //use_only_crust1p0=true;
             if(use_only_crust1p0)
             {
                 cout << sta<<" "<<Vp.nlayers<<endl;
