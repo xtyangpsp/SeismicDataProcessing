@@ -1,0 +1,85 @@
+Attribute averamp
+	Real (8)
+	Format ( "%8.6f" )
+	Null ( "-999.0000" )
+	Description ( "average amplitude in the waveform" )
+	Detail {
+		This attribute gives the average amplitude of deconvolution result.
+	}
+	;
+
+Attribute epsilon
+	Real (8)
+	Format ( "%8.4f" )
+	Null ( "-999.0000" )
+	Description ( "residual ratio at final iteration" )
+	Detail {
+		This attribute gives epsilon value at the final iteration, which is the residual ration in the iterative deconvolution.
+	}
+	;
+
+Attribute niteration
+	Integer (8)
+	Format ( "%8ld" )
+	Null ( "-1" )
+	Description ( "number of iteration" )
+	Detail {
+		This field is the number of iteration in the deconvolution.
+	}
+	;
+
+Attribute nspike
+	Integer (8)
+	Format ( "%8ld" )
+	Null ( "-1" )
+	Description ( "number of spikes" )
+	Detail {
+		This field is the number of spikes in the each waveform.
+	}
+	;
+
+Attribute peakamp
+	Real (8)
+	Format ( "%8.6f" )
+	Null ( "-999.0000" )
+	Description ( "peak amplitude in the waveform" )
+	Detail {
+		This attribute gives the peak amplitude of deconvolution result.
+	}
+	;
+
+Attribute pwfid
+	Integer (8)
+	Format ( "%8d" )
+	Null ( "-1" )
+	Range ( "wfid > 0" )
+	Description ( "processed waveform id" )
+	Detail {
+		Comparable to wfid used in wfdisc, but this integer
+		key is the primary index of the core processing waveform
+		table and is used for association and joining of 
+		ancillary tables created by all processing algorithms
+		that use this schema.
+	}
+	;
+
+Attribute rawsnr
+	Real (8)
+	Format ( "%8.1f" )
+	Null ( "-1.00" )
+	Description ( "RMS signal-to-noise ratio of the raw data" )
+	Detail {
+		This attribute stores the signal-to-noise ratio (RMS) of the corresponding raw data.
+	}
+	;
+
+Relation decon
+	Fields ( pwfid sta chan niteration nspike epsilon peakamp averamp rawsnr )
+	Primary ( sta chan pwfid )
+	Foreign ( pwfid )
+	Description ( "This table is for the quality control of iterative deconvolution" )
+	Detail {
+		This table can be used to post filter the deconvolved data.
+	}
+	;
+

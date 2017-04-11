@@ -1,0 +1,330 @@
+station_mdlist &Tbl{
+sta string
+lat real
+lon real
+elev real
+nsamp int
+samprate real
+datatype string
+dfile string
+dir string
+foff int
+time real
+endtime real 
+timetype string
+}
+
+Ensemble_mdlist &Tbl{
+evid int
+}
+
+output_mdlist &Tbl{
+sta string
+chan string
+nsamp int
+samprate real
+datatype string
+time real
+endtime real 
+dir string
+dfile string
+}
+use_wfdisc true
+# output_mdlist &Tbl{
+# pwfid int
+# time real
+# endtime real
+# dir string
+# dfile string
+# datatype string
+# timetype string
+# samprate real
+# nsamp int
+# wfprocess.algorithm string
+# }
+
+beam_plot_properties	&Arr{
+    SUVariableArea_grey_value	1
+    VariableArea	true
+    WiggleTrace	true
+    blabel	Array Beam
+    blabel2	Array Beam
+    clip_data	false
+    clip_percent	95
+    clip_wiggle_traces	false
+    d1num	0.0
+    d2num	0.0
+    default_curve_color	black
+    f1num	0.0
+    f2num	0.0
+    first_trace_offset	0.0
+    grid1	1
+    grid2	1
+    gridcolor	blue
+    hbox	500
+    interpolate	true
+    label1	time
+    label2	index
+    labelcolor	blue
+    labelfont	Rom14
+    labelsize	18.0
+    n1tic	5
+    n2tic	1
+    plot_file_name	SeismicPlot.ps
+    style	normal
+    time_axis_grid_type	solid
+    time_scaling	auto
+    title	Generic Plot
+    titlecolor	red
+    titlefont	Rom22
+    titlesize	36.0
+    trace_axis_attribute	assoc.delta
+    trace_axis_grid_type	none
+    trace_axis_scaling	auto
+    trace_spacing	1.0
+    trim_gap_edges	true
+    use_variable_trace_spacing	false
+    verbose	true
+    wbox	1000
+    windowtitle	SeismicPlot
+    x1beg	0.0
+    x1end	120.0
+    x2beg	0.0
+    x2end	24.0
+    xbox	50
+    xcur	1.0
+    ybox	50
+}
+
+
+data_plot_properties	&Arr{
+    ThreeComponentMode true
+    SUVariableArea_grey_value	1
+    VariableArea	true
+    WiggleTrace	true
+    blabel	Data Window
+    blabel2	Data Window
+    clip_data	true
+    clip_percent	99.5
+    clip_wiggle_traces	false
+    d1num	0.0
+    d2num	0.0
+    default_curve_color	black
+    f1num	0.0
+    f2num	0.0
+    first_trace_offset	0.0
+    grid1	1
+    grid2	1
+    gridcolor	blue
+    hbox	5000
+    interpolate	true
+    label1	time
+    label2	index
+    labelcolor	blue
+    labelfont	Rom14
+    labelsize	18.0
+    n1tic	5
+    n2tic	1
+    plot_file_name	SeismicPlot.ps
+    style	normal
+    time_axis_grid_type	solid
+    time_scaling	auto
+    title	Data Aligned by Arrival Time
+    titlecolor	red
+    titlefont	Rom22
+    titlesize	36.0
+    trace_axis_attribute	assoc.delta
+    trace_axis_grid_type	none
+    trace_axis_scaling	auto
+    trace_spacing	1.0
+    trim_gap_edges	true
+    use_variable_trace_spacing	false
+    verbose	true
+    wbox	1000
+    windowtitle	SeismicPlot
+    x1beg	0.0
+    x1end	120.0
+    x2beg	0.0
+    x2end	24.0
+    xbox	50
+    xcur	1.0
+    ybox	50
+}
+
+# resammpling recipe
+resample_definitions    &Arr{
+    250 &Arr{
+        Decimator_response_files        &Tbl{
+            5   response/RT72A_5_f
+            5   response/RT72A_5_f
+        }
+        high_limit      251
+        low_limit       249
+    }
+    200 &Arr{
+        Decimator_response_files        &Tbl{
+            5   response/RT72A_5_f
+            4   response/RT72A_4_f
+        }
+        high_limit      201
+        low_limit       199
+    }
+    120 &Arr{
+        Decimator_response_files        &Tbl{
+            0.75      resample
+            4   response/RT72A_4_f
+            4   response/RT72A_4_f
+        }
+        high_limit      121
+        low_limit       119
+    }
+    100 &Arr{
+        Decimator_response_files        &Tbl{
+            5   response/RT72A_5_f
+            2   response/RT72A_2_f
+        }
+        high_limit      101
+        low_limit       99
+    }
+    80  &Arr{
+        Decimator_response_files        &Tbl{
+            4       response/RT72A_4_f
+            2       response/RT72A_2_f
+        }
+        high_limit      81
+        low_limit       79
+    }
+    50  &Arr{
+        Decimator_response_files        &Tbl{
+            5       response/RT72A_5_f
+        }
+        high_limit      51
+        low_limit       49
+    }
+    25  &Arr{
+        Decimator_response_files        &Tbl{
+            0.5      resample
+            5       response/RT72A_5_f
+        }
+        high_limit      26
+        low_limit       24
+    }
+    20  &Arr{
+        Decimator_response_files        &Tbl{
+            2       response/RT72A_2_f
+        }
+        high_limit      21
+        low_limit       19
+    }
+    33.5        &Arr{
+        Decimator_response_files        &Tbl{
+            0.8375      resample
+            4       response/RT72A_4_f
+        }
+        high_limit      34.5
+        low_limit       32.5
+    }
+    40  &Arr{
+        Decimator_response_files        &Tbl{
+            4       response/RT72A_4_f
+        }
+        high_limit      41
+        low_limit       39
+    }
+}
+
+# Used to construct StationChannelMap object
+StationChannelMap       &Arr{
+   SDV	&Tbl{
+        BHE_00 0 0
+        BHN_00 1 0
+        BHZ_00 2 0
+        BHE_10 0 1
+        BHN_10 1 1
+        BHZ_10 2 1
+        HHE_10 0 2
+        HHN_10 1 2
+        HHZ_10 2 2
+        HHE_20 0 3
+        HHN_20 1 3
+        HHZ_20 2 3
+    }
+    default     &Tbl{
+        BHE 0 0
+        BHN 1 0
+        BHZ 2 0
+        HHE 0 1
+        HHN 1 1
+        HHZ 2 1
+        LHE 0 2
+        LHN 1 2
+        LHZ 2 2
+        BH1 0 3
+        BH2 1 3
+        BH3 2 3
+        BH1_00 0 5
+        BH2_00 1 5
+        BHZ_00 2 5
+        BHE_00 0 6
+        BHN_00 1 6
+        BHE_01 0 7
+        BHN_01 1 7
+        BHZ_01 2 7
+        BHE_10 0 8
+        BHN_10 1 8
+        BHZ_10 2 8
+        BHE_HR 0 9
+        BHN_HR 1 9
+        BHZ_HR 2 9
+        BH1_10 0 10
+        BH2_10 1 10
+        BH1_60 0 11
+        BH2_60 1 11
+        BHZ_60 2 11
+        BH1_HR 0 12
+        BH2_HR 1 12
+        HH1 0 13
+        HH2 1 13
+        HH1_00 0 14
+        HH2_00 1 14
+        HH1_10 0 15
+        HH2_10 1 15
+        HHZ_10 2 15
+        HHE_00 0 16
+        HHN_00 1 16
+        HHZ_00 2 16
+        HHE_01 0 17
+        HHN_01 1 17
+        HHZ_01 2 17
+    }
+}
+
+filter DEMEAN;BW 0.5 3 2 3
+
+deconvolution_type iterative
+iterative_decon_type least_square
+max_iteration_time 1000
+tolerance_of_misfit 10
+tolerance_of_misfit_in_step 0.0001
+damping_factor 10000000
+time_bandwidth_product 3
+lower_dpss 0
+shaping_wavelet_type gaussian
+shaping_wavelet_frequency 0
+shaping_wavelet_frequency_for_inverse 0.4
+
+
+netname test
+phase P
+data_window_start -40.0
+data_window_end 400.0
+data_time_pad 20.0
+processing_window_start -20.0
+processing_window_end 200.0
+noise_window_start -40.0
+noise_window_end -10.0
+InputAttributeMap css3.0
+OutputAttributeMap css3.0
+target_sample_interval 0.1
+output_dir tracedeconv4
+apply_free_surface_transform	1
