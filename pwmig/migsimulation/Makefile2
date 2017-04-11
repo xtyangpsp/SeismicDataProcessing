@@ -1,0 +1,17 @@
+BIN=migsimulation
+PF=migsimulation.pf
+# F77LIBS required by layered model simulator 
+ldlibs=-lseispp -lsynthetic -ltrvltm -lbrttutil $(TRLIBS) $(DBLIBS)  \
+       $(F77LIBS) \
+               -lperf -lgclgrid -lpwmig -lseispp
+
+SUBDIR=/contrib
+include $(ANTELOPEMAKE) 
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS += -I$(BOOSTINCLUDE)
+LDFLAGS += -L$(BOOSTLIB) -L../lib/libpwmig/
+
+OBJS=migsimulation.o 
+$(BIN) : $(OBJS)
+	$(RM) $@
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

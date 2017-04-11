@@ -1,0 +1,121 @@
+.TH DB2PWSTACK 1
+.SH NAME
+db2pwstack - build binary input file for pwstack
+.SH SYNOPSIS
+.nf
+db2pwstack db outfile [-v -pf pffile]
+.fi
+.SH DESCRIPTION
+.LP
+This is an Antelope-based program to build an input file that can be used as
+the starting input data for the pwmig suite of programs (pwstack(1), pwmig(1),
+and gridstacker(1)).  This program can thus be viewed as the interface between
+lower level data processing using antelope and the migration inversion steps
+processing of the pwmig suite.   This is a necessary step because the pwmig
+suite requires high performance computing platforms that have proven difficult
+to port to some system due to the fact that antelope is supported on a limited
+number of platforms.   
+.LP
+The program reads data from the database \fIdb\fR and writes the file with 
+a file name defined by argument 2 (\fIoutfile\fR).  The database needs to be
+clean for this processing to work reliably.   There are two different modes of
+database processing controlled by the parameter \fIdatabase_view_mode\fR 
+that must be defined in the parameter file (db2pwstack.pf by default - change 
+if desired with the -pf option).   This parameter can be one of three keywords or
+the program will abort:  use_wfprocess, use_wfdisc, or database_view_mode.   
+Each of these have different requirements defined in individual paragraphs below.
+.LP
+\fIuse_wfprocess mode:\fR  In this mode
+the program assumes the data have been packaged into
+three component bundles.   This is the default and most likely form you will want
+to use because normally this programs will be run on the database created by 
+a related dataprep program called RFeventstacker(1).  This mode uses an extension
+table (i.e. not defined by any current antelope program except ones produced by me)
+called wfprocess.   The most useful thing about wfprocess for this is program is 
+that it allows packaging data into preassembled three-component bundles so this 
+program does not have to deal with all the baggage of channel definitions.  
+The program attempts to build the following view 
+(-> means right join and <- means left join.  
+order is command sequence from left to right):
+.nf
+    event->origin->assoc->arrival<-(wfprocess->sclink->evlink)->site
+      orid==prefor               evid                         sta
+                                 sta 
+                             phase=~/user_defined_phase/                       
+.fi 
+Note that user_defined_phase is set in the parameter file (default is P).
+The final view is sorted by evid:sta and then grouped by evid.   The evid
+group is used to define each ensemble for the output file.
+.LP
+\fIuse_wfdisc mode:\fR  In this mode the program attempts to form the
+following database view (-> means right join and <- means left join.  
+order is command sequence from left to right):
+.nf
+  (arrival<-wfdisc)->assoc->origin->event->sitechan->site
+          a                        b                     c
+.fi
+The qualifiers listed are this:  (a) is a subset to user_defined_phase as 
+noted for use_wfprocess and thejoin keys are arrival.time between 
+time interval wfdisc.time to wfdisc.endtime (Note this implies the data are 
+segmented NOT continuous data); (b) orid==prefor; (c) sort by evid:sta:chan
+and group by evid:sta.
+.LP
+\fIdatabase_view_mode:\fR  Created view is driven by dbprocess commands.
+Default parameter file is effectively equivalent to use_dbprocess, but this
+option exists to allow for unforeseen data oddities.  Note the group by 
+evid:sta is outside the view creation by dbprocess so DO NOT add a group 
+command at the end of the list of dbprocess commands.
+
+.SH OPTIONS
+.IP -v
+Runs in verbose mode.  Default is relatively silent.
+.IP -pf 
+Use alternate parameter file pffile.
+.SH PARAMETER FILE
+.LP
+Several parameters are described above although the user would likely not 
+change these from the default linked to use_wfprocess.  Key user variable 
+parameters are:
+.LP
+\fIdata_time_window_start\fR and \fIdata_time_window_end\fR define a time window
+around the arrival time defined by phase name \fIphase_key\fR. That is, these
+define a time window in time relative to the arrival.time loaded for that phase
+for a given station.   The output of the program is then in time relative to 
+this absolute time (called an arrival time reference frame in related documentation).
+.LP
+\fIPseudostationGridName\fR is the GCLgrid name that identifies the 
+pseudostation grid to be used by pwstack.   The program assumes the
+input database has the extension table gclgdisk that has a reference to
+the grid tagged with this name.   Note that the data in this grid will
+need to be converted to the file format to pass to pwstack where you
+plan to run the migration code. 
+.LP
+\fIminimum_gather_size\fR sets a threshold for the number of three-component
+seismograms a gather needs to contain before it will be written to output.
+As noted in the Pavlis (2010) paper in Geosphere events with few seismograms 
+can do more harm than good in the imaging.   With ccp stacking this parameter
+should be set to 0 as it is not prone to this problem.
+.LP
+The following Tbl entries should normally not be changed by the user: 
+\fIstation_metadata\fR and \fIensemble_metadata\fR.     
+.SH "BUGS AND CAVEATS"
+.IP (1)
+The special binary format output is a bit of an abomination, but useful
+for performance.  An important warning, however, is to beware the endian
+problem.   i.e. do not expect this to work if you run this on a little 
+endian machine and copy the output file to run on a big endian machine 
+(or vice versa).   In general, this is a fragile approach because binary
+compatibility of all basic data types (i.e. char *, int/long, and float/double)
+is assumed.   Beware if you it is anything but intel to intel.
+.IP (2)
+This program is now serving as the data interface between Antelope and
+the plane wave migration suite of programs I have given the tag pwmig.
+Building this program will be problematic for all users.   There will 
+eventually be an instructional web page for building pwmig, but for 
+now note this important detail;  two include files from the pwmig package
+MUST be copied to $ANTELOPE for this code to build in the antelope
+contrib framework.  They are:  (1) pwstack_reader.h found in the pwstack
+directory and (2) SlownessVectorMatrix.h found in libpwmig.
+.SH AUTHOR
+.LP
+Gary L. Pavlis, Indiana University

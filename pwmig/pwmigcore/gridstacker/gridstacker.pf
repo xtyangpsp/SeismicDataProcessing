@@ -1,0 +1,22 @@
+PenaltyFunction coherence_power_function
+# Used only when PenaltyFunction is coherence_power_function or dbxcor_loss_function
+cohpow 2.0
+mastergridname bolivar
+masterfieldname migdata
+output_data_directory stacks
+coherence_x1_decimation_factor 4
+coherence_x2_decimation_factor 4
+coherence_x3_decimation_factor 10
+coherence_component 0
+coherence_grid_name cohgrid
+use_largest_weight_as_initial false
+#
+# These parameters control normalization by solid
+# angle.  Normally should be true.  Cutooff can
+# be determind by running exportgrid program to
+# get am ascii dump of one or more input grids
+# and examining range of component 4 of 5 in
+# pwmig output (solid angle term)
+normalize_by_scattering_angle_range true
+normalization_solid_angle_cutoff 0.0001
+robust_weight_floor 0.0001

@@ -1,0 +1,84 @@
+'\" te
+.TH TELECLUSTER 1 "$Date: 2009/03/05 15:34:27 $"
+#
+.SH NAME
+telecluster - associate teleseismic events into radial grid bins
+.SH SYNOPSIS
+.nf
+telecluster db [-V -pf pffile]
+.fi
+.SH DESCRIPTION
+.LP
+In body wave imaging and probably other problems it is convenient to 
+associate an event catalog with points on a radial grid from a 
+central origin.  This can be used, for example, to stack receiver
+funtions from common source areas provided the grid geometry is 
+appropriate. 
+.LP
+This program builds a radial grid of bins defined from a origin.
+The origin would normally be some point near the center of an array.
+The bins are all radial sectors defined by a range of great circle
+path distances and backazimuths.  Either a regular on irregular grid
+of distance-azimuth sectors can be specified.  The irregular grid 
+definition, however, is the polar equivalent of a rectilinear grid
+(see parameter file description below) meaning the grid is defined
+by two vectors of distance and azimuth values. 
+.LP
+The program output is two database tables:  (1) The hypocentroid table
+contains the computed center of mass for the group of events associated
+with each grid point; and (2) the cluster table defines which 
+events (evid is used as the asociation attribute) which are associated
+with each bin.  
+.SH OPTIONS
+.IP -V 
+Be verbose.  Default runs totally silently.  When -V is set a shortened
+version of the hypocentroid is sent to stdout.
+.IP -pf
+Use alternate parameter file pffile.
+.SH PARAMETER FILE
+.LP
+\fIorigin_latitude\fR and \fIorigin_longitude\fR are used to define the 
+center point from which the radial grid is constructed.  Both are assumed
+to be given in degrees.  
+.LP
+\fIgridname\fR should specify a unique name to be assigned to the grid geometry.
+This is needed by the cluster and hypocentroid tables both require a grid
+name as a key.  (Needed because multiple grids can then be defined in 
+the same database)
+.LP
+The grid geometry is controlled by a boolean parameter with 
+the keyword \fIuse_regular_grid\fR.  As the name implies when true
+a uniform set of points in a specified range of distances and azimuths
+is constructed.  When set true the following parameters are required:
+\fInumber_grid_points_for_azimuth,grid_minimum_azimuth, grid_maximum_azimuth, 
+number_grid_points_for_delta, grid_minimum_delta,\fR
+and \fIgrid_maximum_delta\fR.  As the verbose names imply these are used
+to define the distance range, azimuth range, and number of points into 
+which the range is sliced.  It is very important to realize the grid point
+versus number of cell rule applies here.  That is the range is broken into
+number_grid_points_for_azimuth - 1 azimuth bins and number_grid_points_for_delta -1
+bins for epicentral distance.  
+.LP
+If \fIuse_regular_grid\fR is set false, this program requires two Tbl
+parameter lists with tags of \fIdelta_grid_points\fR and 
+\fIazimuth_grid_points\fR.  These are assumed to be (increasing) lists
+of azimuth and delta values (both in degrees) that specify the bin boundaries
+for each radial sector.  From these lists the program constructs 
+(normally irregularly size) bins with the values in the Tbl entries 
+specifying bin edges.  Thus the number of bins in each polar coordinate
+are one less than the number of points entered.  
+.SH DIAGNOSTICS
+.LP
+Several error messages can appear either from this program or library
+routines in SEISPP that it uses.  The messages are intended to help
+define the problem.
+.SH "BUGS AND CAVEATS"
+.LP
+It should, in principle, be possible to define a totally irregular global
+grid, but that was beyond the scope of what I needed to do this.  If needed
+this would require only a modification to the subset predicate used
+in the EventCatalog object and a C++ with appropriate methods that could
+build such a grid.
+.SH AUTHOR
+Gary L. Pavlis (pavlis@indiana.edu).
+.\" $Id: telecluster.1,v 1.1 2009/03/05 15:34:27 pavlis Exp $

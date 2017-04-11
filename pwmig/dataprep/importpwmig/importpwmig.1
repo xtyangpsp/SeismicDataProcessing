@@ -1,0 +1,59 @@
+.TH IMPORTPWMIG  1
+.SH NAME
+importpwmig - imports GCLvectorfield3d files created by pwmig
+.SH SYNOPSIS
+.nf
+importpwmig [-vector|-scalar -a -db dbname] file1 file2 ... filen
+.fi
+.SH DESCRIPTION
+.LP
+The pwmig suite of programs (pwstack, pwmig, and gridstacker) had to be 
+severed from Antelope to allow the package to be complete source code 
+that could be compiled on any platform without any auxiliary libraries.   
+This was necessary because of the need to run this package on high performance
+computing platforms that were not being supported by BRTT.  One of the outcomes
+of that conversion was the ability to write the GCLvectorfield3d objects 
+that are the output of pwmig and gridstacker as files.   The original 
+GCLgrid library kept all the objects it maintained in a Datascope database.  
+The primary use of this program is to merge a set of n GCLvectorfield3d
+objects from one or more runs of pwmig into a Datascope database where
+large numbers of them are easier to maintain.  
+.LP
+The output data files indexed in the database are currently forced to be written in 
+a single directory with the frozen name of pwmigdata.   The program will only work
+with data from pwmig whose output is a 5 component vector field.
+Furthermore, ALL files in the list must share the same grid geometry or results
+will be wrong or any files with a grid change.   Furthermore the gclgdisk 
+table must NOT contain an entry for the GCLgrid3d geometry file or the program
+will abort.  Use the -a option if you are adding to an existing table with 
+more files of the same geometry.
+.SH OPTIONS
+.IP -vector
+Use this if the inputs are pwmig image (vector) files.
+.IP -scalar
+Use this if the inputs are pwmig coherence data.  (Note -vector and -scalar
+cannot be mixed in one run.
+.IP -a
+Use this option if you are appending additional data to an existing 
+database with the same base grid name as run previously.   
+In this situation the grid geometry data are not saved and the program 
+blindly assumes the data for the grid are already stored in the gclgdisk table.
+.IP -db
+Use this option to change the name of the database to store results.  
+The default is imports.
+.SH FILES
+.LP
+The program will write the grid geometry in a single file defined by the name
+tag for the grid stored in the pf file linked to each file.   The field contents
+for each file are written retaining the original base names passed as arguments.
+.SH DIAGNOSTICS
+.LP
+Various diagnostics should appear if there are problems reading files or 
+saving the results.
+.SH "BUGS AND CAVEATS"
+.LP
+This program is really not designed to handle data from multiple grid 
+geometries.  The -a method is a related awkward construct that is needed
+by very error prone.
+.SH AUTHOR
+Gary L. Pavlis, Department of Geological Sciences, Indiana University

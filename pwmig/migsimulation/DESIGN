@@ -1,0 +1,34 @@
+
+This is a design set of notes for a migration impulse response generator.
+
+What this thing will do is the equivalent of resolution tests for pwmig.
+More or less what it needs to do is generate a fake data set that duplicates
+actual data with signals from some simple model.  This is a simpler thing
+than something exact like a finite difference model.  It will use ray theory 
+and some hugely simplified assumptions.
+
+Initially I think I will plan for two things:
+1. one or more flat layers
+2.  one or more point sources
+
+The layer should allow three options:  a) pure no moveout horizon
+with primaries ohly, b) use the 3d P and S model with primaries only;
+and c) use reflectivity synthetics..  I'll implement a first, but build
+framework for all options.
+
+The point source will use a flat local converter approximation.  That is
+scattering will be like a piece of a flat layer so S will be polarized
+parallel to incident P.  Unlike the flat layer which will have a simple 
+radial polarization at all stations, this will have a polarization that
+depends on position.  The way to do this, I think, is to build the output
+in TRL coordinates.  Then all I need to do is use the dist() procedure
+in antelope to get the angle of rotation at the scattering.  Use this to 
+build in the angle and set up the transformation matrix.  Then before writing
+data all we need to do is call the rotate_to_standard method.  
+
+So, the issue is how to set this up to make it easy to use different 
+approaches to compute the synthetics.  Perfect OOP example. 
+
+base class - abstract synthetic generators
+Each approach is implemented as an version of the abstract class.  A cool 
+concept which will make adding new versions very clean.  

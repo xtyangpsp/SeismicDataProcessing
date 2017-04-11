@@ -1,0 +1,61 @@
+trace_mdl &Tbl{
+    sta string
+    chan string
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    source_lat real
+    source_lon real
+    evid int
+    source_depth real
+    source_time real
+    orid int
+    sta_lat real
+    sta_lon real
+    sta_elev real
+    dir string
+    dfile string
+    atime real
+}
+output_mdl &Tbl{
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    pwfid int
+    dir string
+    dfile string
+    timetype string 
+    wfprocess.algorithm string
+}
+
+save_assoc_mdl &Tbl{
+assoc.sta string
+assoc.orid int
+assoc.phase string
+assoc.vmodel string
+assoc.timedef string
+}
+
+save_arrival_mdl &Tbl{
+arrival.sta string
+arrival.chan string
+arrival.time real
+arrival.iphase string
+}
+save_wfdisc_mdl &Tbl{
+sta string
+chan string
+time real
+endtime real
+dir string
+dfile string
+nsamp int
+samprate real
+}
+start_time_is_origin false
+radial_channel_code ITR
+tangential_channel_code ITT
+save_wfdisc true
+rms_kill_threshold 20.0

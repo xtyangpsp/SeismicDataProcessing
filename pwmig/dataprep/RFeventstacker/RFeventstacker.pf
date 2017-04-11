@@ -1,0 +1,126 @@
+stack_starttime -5.0
+stack_endtime 120.0
+robust_window_starttime 2.0
+robust_window_endtime 30.0
+stack_type robust
+ignore_vertical true
+plot_size_cutoff 10
+ttmodel iasp91
+ttmethod tttaup
+first_fake_origin_time 2020001:00:00:00.0
+fake_origin_time_offsets 3600.0
+phase_for_alignment P
+# chan in arrival will get this label or all posted (fake) arrivals
+arrival_chan Z
+#
+# This set of parameters provide capability of post filtering 
+# stack with a limited suite of possible wavelets.
+# Currently only allow ricker or gaussian.
+#
+# this must be true to enable the post filtering features
+filter_stack true
+filter_type ricker
+wavelet_length 200
+# for gaussian sigma, for ricker 1/fc=nu
+wavelet_width_parameter 2.0
+# In this program all data are written to a single file directory set by output_dir
+output_dir stackdata
+output_dfile stackdata.w
+# If true expect to read from wfdisc.  If false, assume wfprocess
+use_wfdisc false
+# The user must never change these 
+Station_mdlist &Tbl{
+sta string
+site.lat real
+site.lon real
+site.elev real
+arrival.time real
+nsamp int
+samprate real
+time real
+endtime real
+timetype string
+datatype string
+dfile string
+dir string
+foff int
+}
+Ensemble_mdlist &Tbl{
+sta string
+gridid int
+hclat real
+hclon real
+hcdepth real
+}
+wfprocess_mdlist &Tbl{
+pwfid in`
+time real
+endtime real
+dir string
+dfile string
+foff string
+datatype string
+timetype string
+samprate real
+nsamp int
+wfprocess.algorithm string
+}
+# time, endtime, nsamp, samprate, and datatype are intentionally not here
+# they are automatically written by dbsave procedure 
+wfdisc_mdlist &Tbl{
+sta string
+chan string
+dir string
+dfile string
+foff string
+}
+#
+# Resample related parameter
+#
+target_sample_interval 0.05
+resample_definitions	&Arr{
+    100	&Arr{
+        Decimator_response_files	&Tbl{
+            5	response/RT72A_5_f
+        }
+        high_limit	101
+        low_limit	99
+    }
+    50	&Arr{
+        Decimator_response_files	&Tbl{
+            0.5    resample
+            5       response/RT72A_5_f
+        }
+        high_limit	51
+        low_limit	49
+    }
+    40	&Arr{
+        Decimator_response_files	&Tbl{
+            2       response/RT72A_2_f
+        }
+        high_limit	41
+        low_limit	39
+    }
+    20	&Arr{
+        Decimator_response_files	&Tbl{
+            1 none
+        }
+        high_limit	21
+        low_limit	19
+    }
+    25	&Arr{
+        Decimator_response_files	&Tbl{
+            0.25    resample
+            5       response/RT72A_5_f
+        }
+        high_limit	26
+        low_limit	24
+    }
+    10 &Arr{
+        Decimator_response_files &Tbl{
+            0.5     resample
+        }
+        high_limit 11
+        low_limit 9
+    }
+}

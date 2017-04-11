@@ -1,0 +1,89 @@
+Attribute coherence
+	Real (7)
+	Format ( "%7.3f" )
+	Null ( "-1.0" )
+	Range ( "coherence>=0.0 && coherence<=1.0" )
+	Description ( "coherence" )
+	Detail {
+		Coherence is a measure of waveform similarity commonly used in many 
+signal processing algorithms.
+	}
+	;
+
+Attribute semblance
+	Real (7)
+	Format ( "%7.3f" )
+	Null ( "-1.0" )
+	Range ( "semblance>=0.0 && semblance<=1.0" )
+	Description ( "semblance" )
+	Detail {
+		Semblance is a measure of waveform similarity commonly used stacking.
+	}
+	;
+
+Attribute gridid
+        Integer (8)
+        Format ( "%8d" )
+        Null ( "-1" )
+        Range ( "gridid > 0" )
+        Description ( "grid id index" )
+        Detail {
+		Spatial grids are conveniently indexed with a single
+		integer.  This allows the structure of the grid to be
+		defined as desired.  This index is also a convenient
+		key if the grid is defined in a database table instead
+		of being stored on disk.
+        }
+        ;
+
+Attribute pchan
+	String (8)
+	Format ( "%-8s" )
+	Null ( "-" )
+	Description ( "Processing channel code" )
+	Detail {
+		This is a processing channel code that may or may not match the more 
+common chan attribute.  It is intended most to denote  generic channel after resampling 
+and/or coordinate reorientation.  The expected codes are Z,N,E,L,R,T,H, and 3C but the 
+range is not currently restricted to these.
+	}
+	;
+
+Attribute pwfid
+	Integer (8)
+	Format ( "%8d" )
+	Null ( "-1" )
+	Range ( "wfid > 0" )
+	Description ( "processed waveform id" )
+	Detail {
+		Comparable to wfid used in wfdisc, but this integer
+		key is the primary index of the core processing waveform
+		table and is used for association and joining of 
+		ancillary tables created by all processing algorithms
+		that use this schema.
+	}
+	;
+
+Attribute fold
+	Integer (4)
+	Format ( "%4d" )
+	Null ( "-1" )
+	Range ( "fold > 0" )
+	Description ( "number of elements used in a stack" )
+	Detail {
+		In stacking data we commonly used the word fold to denote the number of 
+members stacked to produce an average estimate.
+	}
+	;
+
+Relation stackstats
+	Fields ( sta pchan gridid phase pwfid fold coherence semblance lddate )
+	Primary ( sta pchan gridid )
+	Description ( "Table for vertical stacking methods" )
+	Detail {
+		RFeventstacker computes vertical stacks from virtual sources.  This table is
+		used to store stacking statistics in that program, but could be used
+		by any vertical stacking method.
+	}
+	;
+

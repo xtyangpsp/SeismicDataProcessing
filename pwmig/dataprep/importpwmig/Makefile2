@@ -1,0 +1,13 @@
+BIN=importpwmig
+MAN1=importpwmig.1
+ldlibs=-lseispp -lgclgrid $(DBLIBS) -lperf -lstock -lseispp -lgclgrid
+SUBDIR=/contrib
+
+include $(ANTELOPEMAKE)
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS+=-I$(BOOSTINCLUDE)
+LDFLAGS+=-L$(BOOSTLIB) -L../../../antelope/dsap_conversion/libstock/
+OBJS=importpwmig.o
+$(BIN) : $(OBJS)
+	$(RM) $@
+	$(CXX) $(CCFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

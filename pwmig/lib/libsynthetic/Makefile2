@@ -1,0 +1,35 @@
+LIB=libsynthetic.a
+#DLIB=$(LIB:.a=$(DSUFFIX))
+#BUNDLE=$(LIB:.a=.bundle)
+INCLUDE=SyntheticSeismogram.h PointSourcePSSynthetic.h \
+        vectorcls.h SimplePSPrimarySynthetic.h StaVariableLayeredSynthetic.h \
+        SphericalRayPathArray.h   
+cflags=-g
+fflags=-g
+ldlibs=$(F77LIBS)
+
+SUBDIR=/contrib
+include $(ANTELOPEMAKE) 
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS += -I$(BOOSTINCLUDE)
+LDFLAGS += -L$(BOOSTLIB)
+
+OBJS=	PointSourcePSSynthetic.o SimplePSPrimarySynthetic.o \
+        SphericalRayPathArray.o StaVariableLayeredSynthetic.o \
+        vectorcls.o \
+        abm.o dfftr.o fft.o ifmat.o kntfun.o kntsyn.o locast.o npowr2.o
+
+
+$(LIB) : $(OBJS)
+	$(RM) $@
+	$(CXXAR) $(CXXARFLAGS) $@ $(OBJS)  
+	$(RANLIB) $@
+
+# Turned of - shared library not really necessary for this code
+#$(DLIB) : $(OBJS)
+#	$(RM) $@
+#	$(CXXDLD) $(CXXDLDFLAGS) -o $(DLIB) $(OBJS) $(DLDLIBS) 
+#
+#$(BUNDLE) : $(OBJS)
+#	$(RM) $@
+#	$(DLD)  -flat_namespace -bundle -undefined suppress -o $@   $(OBJS) $(LDFLAGS) $(DLDLIBS)

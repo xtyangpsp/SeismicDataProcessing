@@ -1,0 +1,36 @@
+This is a new program designed to group receiver functions from 
+common distance and azimuth bins so the results can be processes as
+if they were single events.  This depends, of course, on the 
+data being already deconvolved or it is totally irrational.
+This came up originally because S Rfs from STEEP needed this features.
+Probably will be useful for the P data as well.  
+
+Some concepts off the bat that come to mind.
+1.  Output of this is simple - a cluster table.  gridid should be some
+arbitrary number generated internally.
+2.  Binning should be driven by a tbl that gives azimuth ranges and 
+distance ranges.  It should be possible to overlap the ranges without
+prejudice.
+3. Should generate a hypocentroid table so the results can use the
+hypocentroid as a virtual source point.
+4.  This should be a good application of the new EventCatalog object.  The
+subset generic component of this object is ideal for this.  We can set
+up the geometry and run the subset method for each cell to produce the 
+result.
+5. Calculating the hypocentroid will be a bit nontrivial.  Reason is that we 
+have to be careful about things like crossing the dateline.  I think the best 
+approach is to do this in polar coordinates.  That is, grid will be centered on some referenc point anyway.  For each event in a subset compute a vector
+of distance and back azimuths.  The centroid of angle and distances should
+be an ok approximation here because by definition we are at teleseismic
+distances so a divergence effect which, I think, would make this not quite
+the same as a true centeroid should not be a big deal.  This is definitely
+an approximation.  Think of the example of a radial-distance range patch.
+It is easy to conceive examples of points in such a path that would have
+a different centroid in polar coordinates from a pole to this patch 
+that what one would estimate from local cartesian coordinates.  Still
+this should not matter for this application.  It would if this were adapted
+to something like event location hypocentroids.  
+
+
+Probably want to pass the output of this program through a stacker.  Stacker would straight sum 
+ensembles made by clusterid:sta:chan.  This is a differnt application.

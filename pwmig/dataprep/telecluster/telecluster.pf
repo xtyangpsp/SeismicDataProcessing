@@ -1,0 +1,13 @@
+origin_latitude  60.6025
+origin_longitude -142.339
+use_regular_grid true
+gridname steepglobal
+grid_minimum_azimuth 0
+grid_maximum_azimuth 360
+number_grid_points_for_azimuth 13
+grid_minimum_delta 20.0
+grid_maximum_delta 100.0
+number_grid_points_for_delta 9
+ttmethod tttaup
+ttmodel iasp91
+pf_revision_time	1235589273

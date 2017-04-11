@@ -1,0 +1,14 @@
+BIN=project1dmod
+
+cxxflags=-g 
+ldlibs=-lseispp -ltrvltm -lgclgrid -lseispp $(TRLIBS) $(DBLIBS) -lperf -lm
+SUBDIR=/contrib
+
+include $(ANTELOPEMAKE)
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS+=-I$(BOOSTINCLUDE)
+LDFLAGS+=-L$(BOOSTLIB)
+
+OBJS=project1dmod.o
+$(BIN) : $(OBJS)
+	$(CXX) $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

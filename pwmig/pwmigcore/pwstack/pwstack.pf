@@ -1,0 +1,97 @@
+# This version of this pf applies Fresnel zone aperture and net centroid cutoff
+# feature
+aperture_taper_length 2.0
+centroid_cutoff 35.0  # half the nominal station spacing for TA
+use_fresnel_aperture true
+fresnel_vs 4.5
+fresnel_vp 8.1
+fresnel_cutoff_multiplier 2.0
+fresnel_period 5.0
+fresnel_lag_time_sampling_interval 1.0
+fresnel_number_lag_samples 100
+
+enable_data_mute true
+Data_Top_Mute	&Arr{
+    end_time	3.0
+    time_reference_type	relative
+    zero_end_time	1.0
+}
+Slowness_Grid_Definition	&Arr{
+    Slowness_Grid_Name	test
+    dux	0.01
+    duy	0.01
+    nux	11
+    nuy	11
+    uxlow	-0.05
+    uylow	-0.05
+}
+enable_stack_mute true
+Stack_Top_Mute	&Arr{
+    end_time	3.0
+    time_reference_type	relative
+    zero_end_time	1.0
+}
+data_time_window_end	100.0
+data_time_window_start	-25.0
+dbprocess_commands	&Tbl{
+	dbopen event
+	dbjoin origin
+	dbjoin assoc
+	dbjoin arrival
+	dbjoin wfprocess :arrival.time#wfprocess.time::wfprocess.endtime
+	dbjoin site sta
+    dbsort evid sta 
+    dbgroup evid sta
+}
+depth_dependent_aperture	&Tbl{
+    0.0 75.0 150.0
+   700.0 75.0 150.0
+}
+ensemble_metadata	&Tbl{
+evid int
+lat real
+lon real
+time real
+depth real
+}
+pf_revision_time	1107002513
+pseudostation_grid_name	grids/taimage2D
+stack_metadata	&Tbl{
+    pwfid int
+    wfprocess.dir string
+    wfprocess.dfile string
+    wfprocess.datatype string
+    wfprocess.timetype string
+    wfprocess.algorithm string
+}
+stack_time_end	90.0
+stack_time_start	0.0
+station_metadata	&Tbl{
+    sta string
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    dfile string
+    dir string
+    foff int
+    arrival.time real
+    arrival.iphase string
+    assoc.phase string
+    site.lat real
+    site.lon real
+    site.elev real
+    site.refsta string
+    site.dnorth real
+    site.deast real
+    timetype string
+    datatype string
+}
+waveform_directory	./pwfiles_layersim
+coherence_sample_interval 5.0
+coherence_average_length 10.0
+output_data_file_base_name layersim
+database_view_mode use_wfprocess
+field_file_directory migrated_data_layersim
+field_base_name foldls
+stack_count_cutoff 5

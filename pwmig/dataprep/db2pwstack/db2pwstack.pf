@@ -1,0 +1,47 @@
+PseudostationGridName grids/taimage2D
+use_file_for_pseudostationgrid true
+data_time_window_start  -25.0
+data_time_window_end    120.0
+phase_key P
+minimum_gather_size 100
+database_view_mode use_wfprocess
+dbprocess_commands      &Tbl{
+    dbopen event
+    dbjoin origin
+    dbjoin assoc
+    dbjoin arrival
+    dbsubset phase=~/P/
+    dbjoin wfprocess :arrival.time#wfprocess.time::wfprocess.endtime
+	dbjoin site sta
+    dbsort evid sta
+}
+
+station_metadata	&Tbl{
+    sta string
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    dfile string
+    dir string
+    foff int
+    arrival.time real
+    arrival.iphase string
+    assoc.phase string
+    site.lat real
+    site.lon real
+    site.elev real
+    site.refsta string
+    site.dnorth real
+    site.deast real
+    timetype string
+    datatype string
+}
+ensemble_metadata	&Tbl{
+dir string
+evid int
+origin.lat real
+origin.lon real
+origin.time real
+origin.depth real
+}

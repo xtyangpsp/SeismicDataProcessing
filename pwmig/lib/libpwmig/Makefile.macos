@@ -1,0 +1,18 @@
+LIB=libpwmig.a
+INCLUDE=PwmigFileHandle.h
+#MAN3=		# man pages for library routines
+SUBDIR=/contrib
+include $(ANTELOPEMAKE)
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS+=-I$(BOOSTINCLUDE)
+LDFLAGS+=-L$(BOOSTLIB)
+
+
+#OBJS=PwmigFileHandle.o PPWDeconProcessor.o
+OBJS=PwmigFileHandle.o 
+PPWDeconProcessor.o :PPWDeconProcessor.h
+
+$(LIB) : $(OBJS)
+	$(RM) $@
+	$(CXXAR) $(CXXARFLAGS) $@ $(OBJS)  
+	$(RANLIB) $@

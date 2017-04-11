@@ -1,0 +1,134 @@
+interfaces &Tbl{
+    30.0    0.5
+    90.0    -0.2
+    410.0   0.3
+    660.0   0.3
+}
+database_view_mode use_wfprocess
+data_time_window_start -10.0
+data_time_window_end 70.0
+output_directory simdata
+output_data_file_base_name simdata
+wavelet_type gaussian
+data_sample_interval 0.05
+wavelet_length 101
+wavelet_width_parameter 0.5
+station_metadata        &Tbl{
+    sta string
+    time real
+    endtime real
+    nsamp int
+    samprate real
+    dfile string
+    dir string
+    foff int
+    arrival.time real
+    arrival.iphase string
+    assoc.phase string
+    site.lat real
+    site.lon real
+    site.elev real
+    site.refsta string
+    site.dnorth real
+    site.deast real
+    timetype string
+    datatype string
+}
+ensemble_metadata &Tbl{
+    dir string
+    evid int
+    origin.lat real
+    origin.lon real
+    origin.time real
+    origin.depth real
+}
+# intentionally do not use time, endtime, samprate, nsamp, and datatype
+# as these are hard wired in the procedure used 
+#
+wfprocess_metadata &Tbl{
+    pwfid int
+    timetype string
+    dir string
+    dfile string
+    wfprocess.algorithm string
+}
+wfdisc_metadata &Tbl{
+    sta string
+    chan string
+    dir string
+    dfile string
+}
+#
+# These parameters are referenced by SimplePSPrimarySynthetic constructor only
+#
+surface_P_velocity 5.8
+surface_S_velocity 3.5
+SimplePSPrimarySynthetic::ddelta 1.0
+SimplePSPrimarySynthetic::ndelta 1500
+Synthetic_method POINTSOURCE
+#
+# These parameters are only for the StaVariableLayeredSynthetic constructor
+#
+listfile model_files.list
+tsigma 1.0
+# When false return pure impulse response.  true deconvolute with wvlevel 
+# to compute receiver function simulation
+receiver_function_mode true
+# relative water level for water level method. Referenced only if 
+# receiver_function_mode is set true
+water_level 0.01
+
+# parameters below are solely for PointSourcePSSynthetics
+zmin 0.2
+zmax 750
+dz 1
+distance_cutoff 380 
+Velocity_Model_DB db/vmodel
+Velocity_Model northak 
+vmodel_datasource text
+#text: 1d velocity model constructed from text file
+#database:1d velocity model constructed from Antelope database
+Vmodel_text_file db/ak135_Vmodel
+VModel_paraname  Svelocity
+rotation_type 1
+# 1 indicates curvilinear paths
+# 0 indicates linear paths
+
+ray_parameter_grid &Tbl{
+0.000
+0.001
+0.002
+0.003
+0.004
+0.005
+0.006
+0.007
+0.008
+0.009
+0.010
+0.012
+0.014
+0.016
+0.018
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+0.08
+0.09
+0.10
+0.11
+0.12
+0.13
+0.14
+0.15
+0.16
+0.17
+0.18
+0.19
+}
+pointsrcfile  pointsourcelocs.dat
+num_point_scatterers 4140
+

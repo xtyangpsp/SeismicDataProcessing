@@ -1,0 +1,93 @@
+Natural order of pwstack program:
+foreach  pseudostation grid x1
+	foreach pseudoation grid x2
+		foreach slowness grid component
+			output one 3c stack object
+			output scalar coherence
+			output vector coherence
+		end
+	end
+end
+
+pwmig has to reverse this and read data in this fashion:
+
+foreach slowness grid component
+	read all data from each pseudostation point.
+
+
+A very important for the current structure is the x1 and x2 grid
+need to be allowed to have many holes.  i.e. the x1 and x2 pseuostation
+grid is not regular and needs to be fully indexed.
+
+The combined information needed to index a single file is not 
+large at all here.  Let's think about a set of data structures it
+would take to store this then think about an external structure.
+
+We could build a struct for each stack pushed to output. The 
+same struct should work for the coherence data, although some
+extras may be required.   There is also a need for global data
+common to the entire event file. Let's start with the global 
+data:
+
+evid - event id
+Hypocenter of this event
+samprate - fixed sample rate for all data in this file
+model:method - defines how slowness computed (probably not necessary)
+
+The struct for each output record will need to contain 
+at least these:
+
+time -start time in arrival time reference frame
+endtime - end time in same reference frame
+nsamp (this might be allowed to be fixed and global)
+lat,lon, elev of pseudostation point
+(current program saves hang, vang, but we should be able to assume
+all output are in cardinal directions.)
+ix1, ix2 - pseudostation grid index positions (linked to gclgrid)
+ux,uy - actual slowness value of this stack (varies across grid)
+ux0,uy0 - computed slowness for this hypocenter to pseudostation point
+
+Some that may or may not be required are:
+sta
+chan
+
+Note the coherence trace currently is save to wfprocess using same
+metadata list as the trace data.  It is linked back to the stack 
+with which it is associated by the attrlink table attribute
+attwfid.  
+
+So, the way to do the output is now clear.  We can simply create
+a struct with the above attributes and accumulate a list of these
+records as the program runs.  When the loop of x1, and x2 exits
+this list is posted to a hdr file that is a dump of this struct.
+
+Read is probably best done as the reverse.  Read the hdr file and use
+it to read the data.
+
+Now let's consider some models for how to do this:
+1. Rather than a list, it would make a lot of sense to 
+cache the struct records into a vector container.  The
+results could then be presorted by ix1,ix2 before being
+written.  Then the reader would be much simpler and would
+not need to carry the extra memory burden of the index.  
+This is probably the right choice.
+
+2. I could build on my header template.  This would make the 
+result more general, although it would unquestionably compromise
+speed.  Coding time may be less, however, because I most of
+that finished already.  Further, because the header interface
+is similar to the db interface the coding changes on both 
+ends would be minimal.  
+
+3.  I could write a new simple db handle that would have get and put
+methods that mimic the current program.  Probably a bad idea though
+because the existing code has some antelope stuff (dbgetv and others)
+hard coded already.  Reject this idea.
+
+So self, a) the vector container of a special struct is clearly 
+the way to go.  b) I'll need to do some background on the 
+state of the header code.  Might be a good way to kill two
+birds with one stone there.  
+
+This will have to be done later.  I clearly didn't put this stuff under
+cvs control.  Not in what I checked out anyway.

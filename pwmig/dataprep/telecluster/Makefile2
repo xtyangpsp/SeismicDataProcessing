@@ -1,0 +1,14 @@
+BIN=telecluster
+PF=telecluster.pf
+
+MAN1=telecluster.1
+ldlibs= -lseispp -ltrvltm -lgclgrid $(TRLIBS) $(DBLIBS) -lperf -lm
+SUBDIR=/contrib
+
+include $(ANTELOPEMAKE) 
+include $(ANTELOPE)/contrib/include/antelopemake.local
+CXXFLAGS+=-I$(BOOSTINCLUDE)
+LDFLAGS+=-L$(BOOSTLIB)
+OBJS= telecluster.o
+$(BIN) : $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

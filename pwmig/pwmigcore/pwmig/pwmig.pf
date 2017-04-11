@@ -1,0 +1,43 @@
+Parent_GCLgrid_Name grids/taimage2D
+stack_grid_name	grids/taimage3D
+border_padding	10
+output_field_directory	migrated_data_layersim
+output_filename_base lsim
+use_depth_variable_transformation	false
+maximum_depth	800.0
+maximum_time_lag	120.0
+fixed_u_mode	false
+slowness_grid_deltau	0.01
+# set to small value for ccp stacking
+delta_slowness_cutoff 1.0
+ray_trace_depth_increment	1.0
+data_sample_interval 0.05
+# new Jan 25,2007 for weighting function fundamental problem
+recompute_weight_functions false
+weighting_function_smoother_length 10
+# New for coherence option
+use_grt_weights true
+coherence_grid_name	grids/tacoh3D
+coherence_raygrid_decimation	10
+coherence_smoother_length 10
+Velocity_model_surface_tolerance 0.010
+save_partial_sums false
+#
+# new parameter added july 23 
+#
+Incident_TTgrid_zdecfac 10
+depth_padding_multiplier 1.2
+apply_elevation_statics false
+# velocity here should be scaled as 1/(1/Vs - 1/Vp)
+elevation_static_correction_velocity 8.4
+#
+# new parameters winter 2015
+#
+use_3d_velocity_model false
+# these are referenced now only if use_3d_velocity_model is true
+P_velocity_model3d_name	vmodels/ak135_P
+S_velocity_model3d_name	vmodels/ak135_S
+P_velocity_model1d_name	vmodels/ak135.mod1d
+S_velocity_model1d_name	vmodels/ak135.mod1d
+3d_models_are_total_velocity true
+pf_revision_time	1098359696
