@@ -148,7 +148,7 @@ ThreeComponentEnsemble *BuildRegularGather(ThreeComponentEnsemble& raw,
 	const string arrival_keyword("arrival.time");
 	const double samprate_tolerance(0.01);  // fractional sample rate tolerance
 	int nmembers=raw.member.size();
-	auto_ptr<TimeSeries> x1,x2,x3;
+	shared_ptr<TimeSeries> x1,x2,x3;
 	ThreeComponentEnsemble *result;
 	result = new ThreeComponentEnsemble(raw);
 	// An inefficiency here, but this allow us to discard dead
@@ -172,9 +172,9 @@ cout << d.get_string("sta")<<" has arrival time ="
 			d.rotate_to_standard();	
 			// partial clone used to hold result
 			ThreeComponentSeismogram d3c(d);  
-			x1=auto_ptr<TimeSeries>(ExtractComponent(d,0));
-			x2=auto_ptr<TimeSeries>(ExtractComponent(d,1));
-			x3=auto_ptr<TimeSeries>(ExtractComponent(d,2));
+			x1=shared_ptr<TimeSeries>(ExtractComponent(d,0));
+			x2=shared_ptr<TimeSeries>(ExtractComponent(d,1));
+			x3=shared_ptr<TimeSeries>(ExtractComponent(d,2));
 			// resample if necessary.  Using auto_ptr to avoid temporary pointer
 			// and as good practice to avoid memory leaks
 			if( (abs( (d.dt)-target_dt)/target_dt) > samprate_tolerance)
@@ -183,7 +183,7 @@ cout << d.get_string("sta")<<" has arrival time ="
 				*x2=ResampleTimeSeries(*x2,rdef,target_dt,false);
 				*x3=ResampleTimeSeries(*x3,rdef,target_dt,false);
 			}
-			// This procedure returns an auto_ptr.  An inconsistency in
+			// This procedure returns an shared_ptr.  An inconsistency in
 			// SEISPP due to evolutionary development
 			x1=ArrivalTimeReference(*x1,arrival_keyword,processing_window);
 			x2=ArrivalTimeReference(*x2,arrival_keyword,processing_window);
@@ -1008,15 +1008,15 @@ int main(int argc, char **argv)
 							ApplyFST(d,hypo,rotation_type);
 						}
 						ThreeComponentSeismogram d3c(d);
-						auto_ptr<TimeSeries> noise;
-						noise=auto_ptr<TimeSeries>(ExtractComponent(d,2));
+						shared_ptr<TimeSeries> noise;
+						noise=shared_ptr<TimeSeries>(ExtractComponent(d,2));
 						if( (abs( (noise->dt)-target_dt)/target_dt) > 0.01)
 						{
 							*noise=ResampleTimeSeries(*noise,rdef,target_dt,false);
 						}
 						noise=ArrivalTimeReference(*noise,arrival_keyword,noise_twin);
 						all_noise.push_back(noise->s);
-						noise.release();
+//                        noise.release();
 					}
 				}
 			}
