@@ -6,7 +6,6 @@
 #include <string>
 #include <cstdlib>
 #include <time.h>
-#include <cmath>
 #include <complex>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_fft_complex.h>
@@ -26,7 +25,8 @@
 #include "stack.h"
 
 #include "SignalToNoise.h"
-
+#include "dmatrix.h"
+#include <cmath>
 /*
 This the deconvolution program working on conventional receiver function deconvolution,
 which means taking the vertical component as the wavelet to deconvolve with the horizontal

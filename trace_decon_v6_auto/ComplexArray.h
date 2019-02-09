@@ -7,10 +7,12 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_fft_complex.h>
 #include "seispp.h"
-
+#include <cmath>
 #define REAL(z,i) ((z)[2*(i)])
 #define IMAG(z,i) ((z)[2*(i)+1])
 using namespace std;
+using namespace SEISPP;
+
 typedef std::complex<double> Complex64;
 typedef std::complex<float> Complex32;
 

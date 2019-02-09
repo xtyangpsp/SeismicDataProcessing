@@ -1,22 +1,23 @@
 BIN=trace_decon
 DATADIR=schemas/css3.0.ext
-DATA=decon
+DATA=decon wfprocess sclink evlink
 SUBDIR=/contrib
 
 PF=trace_decon.pf
 
-ldlibs=-L$(XMOTIFLIB) -L$(BOOSTLIB) -lseisw -lXm -lXt \
-	-lgclgrid -lseispp -lperf -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas -lseispp $(TRLIBS) $(DBLIBS)  \
-       $(F77LIBS) $(X11LIBS)
-
+ldlibs= -lseispp -L$(BOOSTLIB) \
+	-lperf -L/usr/local/Cellar/gsl/2.5/lib -lgsl \
+	-lgslcblas $(TRLIBS) $(DBLIBS) $(F77LIBS) -lseispp 
+# ldlibs= -lseispp
+	
 ANTELOPEMAKELOCAL = $(ANTELOPE)/contrib/include/antelopemake.local
-include $(ANTELOPEMAKE)  	
+include $(ANTELOPEMAKE)
 include $(ANTELOPEMAKELOCAL)
-CXX=c++-6
-CXXFLAGS += -I$(BOOSTINCLUDE) -I/usr/local/Cellar/gsl/2.5/include -fopenmp -O3
-LDLIBS += -L~/SOFT/usr/local/include
-LDFLAGS += -Wl,-rpath,~/SOFT/usr/local/lib
+CXX=g++-8
+CXXFLAGS += -I/usr/local/Cellar/gsl/2.5/include -I$(BOOSTINCLUDE) -fopenmp -O3
+# LDLIBS += -L/usr/local/Cellar/gcc/8.2.0/lib 
+#LDFLAGS += -Wl,-rpath,/usr/local/Cellar/gsl/2.5/lib #/usr/local/lib
 
-OBJS= trace_decon.o ComplexArray.o DeconOperator.o dpss.o
+OBJS= trace_decon.o ComplexArray.o DeconOperator.o dpss.o dmatrix.o 
 $(BIN) : $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
