@@ -45,16 +45,17 @@ const string csversion("v1.0");
 
 void version()
 {
-	cerr <<"< version "<<csversion<<" > 2/11/2019"<<endl;
+	cerr <<"< version "<<csversion<<" > 2/12/2019"<<endl;
 }
 void author()
 {
-	cerr <<endl<<"Xiaotao Yang, University of Massachusetts Amherst, 2/12/2019"<<endl<<endl;
+	cerr <<endl<<"Xiaotao Yang, University of Massachusetts Amherst"<<endl<<endl;
 }
 void usage_message()
 {
     version();
-    cerr << "predict_firstarrivals eventdb sitedb arrivaldbout [-ss site_subset][-os origin_subset][-continue][-v|V][-h|H]"<<endl;
+    cerr << "predict_firstarrivals eventdb sitedb arrivaldbout "<<endl
+	 << "      [-ph phasename][-ss site_subset][-os origin_subset][-continue][-v|V][-h|H]"<<endl;
     cerr << "** Use -h to print out detailed explanations on the options."<<endl
          << "** Only mark arrivals on *Z channels."<<endl;
     author();
@@ -66,6 +67,8 @@ void help()
     <<"<<Required: eventdb sitedb arrivaldbout >>"<<endl
         <<endl
         <<"<<Options>>"
+	<<"-ph phasename: "<<endl
+	<<"                 Specify phase types: P or S. Default is P."<<endl
         <<"-ss site_subset: "<<endl
         <<"                 Subset expression for sitechan table. "<<endl
         <<"                 Subset for vertical channels is built-in in the code."<<endl
