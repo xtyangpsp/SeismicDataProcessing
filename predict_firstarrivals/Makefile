@@ -1,7 +1,6 @@
 BIN=predict_firstarrivals
 SUBDIR=/contrib
-ldlibs=-lseispp -ltrvltm -lbrttutil $(TRLIBS) $(DBLIBS)  \
-               -lperf -lseispp
+ldlibs=-lseispp -ltrvltm -lbrttutil $(TRLIBS) $(DBLIBS) 
 
 ANTELOPEMAKELOCAL = $(ANTELOPE)/contrib/include/antelopemake.local
 include $(ANTELOPEMAKE) 
