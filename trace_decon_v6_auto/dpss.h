@@ -1,12 +1,12 @@
 #ifndef __DPSS_H__
 #define __DPSS_H__
 #include <string.h>
-#include "seispp.h"
+//#include "seispp.h"
 #include <cmath>
 #define PI 3.141592653589793238463
 
 using namespace std;
-using namespace SEISPP;
+//using namespace SEISPP;
 //Error classes for LAPACK, and a general error
 class ERR{
     public:    

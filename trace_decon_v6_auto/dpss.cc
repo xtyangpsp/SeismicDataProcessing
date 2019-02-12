@@ -1,5 +1,6 @@
 #include "perf.h"
 #include "dpss.h"
+#include <cstdlib>
 
 void compute_energy_concentrations(double *h, int n, double NW, double *lambda, int nseq){
     
