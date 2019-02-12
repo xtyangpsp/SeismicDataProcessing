@@ -1,0 +1,18 @@
+library dependency:
+1. gsl: gnu scientific library. Can be easily installed through fink or brew on macOS.
+2. boost: can be installed using fink or brew on macOS. Needs to be set through Antelope "localmake_config"
+3. openMP: also a standard parallel computing library, can be installed through fink or brew.
+4. seispp: this is a seismic data processing library written by Gary Pavlis. It can be installed with Antelope as part of the contrib package. Rembmer to run git pull to make sure the library is up-to-date and then recompile following the instructions there.
+
+install:
+make
+make install
+
+This will compile the code and install it to Antelope contrib bin directory. Make sure the libraries paths are correct in the Makefile. The dependent database tables, including decon, wfprocess, sclink, evlink, will also be installed.
+
+**Trouble shooting:
+1. If the linker failed, make sure the libraries in error message are in the search paths. From tests, using gcc compilers from brew or others, instead of Apple system built-in clang, will fail to link seispp and other std libraries. The current Makefile is written to work under Apple clang.
+2. If using other compilers, such as g++-**, change the CXXFLAGS linke to remove -Xpreprocessor entry. This entry is only needed on macOS clang built using XCode.
+
+Note added by Xiaotao Yang @ UMass Amherst on Feb 12, 2019
+ 
