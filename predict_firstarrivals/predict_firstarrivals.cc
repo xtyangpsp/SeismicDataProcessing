@@ -305,7 +305,7 @@ int main(int argc, char **argv)
         cout <<">>++++++++++++++++++++++++++++++"<<endl;
         
     //     for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
-        for(i=0,dbin_event.rewind();i<3;++i,++dbin_event)
+        for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
         {
             cout <<"> Working on orid: "<<dbin_event.get_int("orid")<<" ... "<<i+1<<" of "<<nevent<<""<<endl;
             otime=dbin_event.get_double("origin.time");
