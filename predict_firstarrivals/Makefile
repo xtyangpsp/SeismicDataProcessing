@@ -9,7 +9,7 @@ include $(ANTELOPEMAKELOCAL)
 CXXFLAGS += -I$(BOOSTINCLUDE)
 LDFLAGS += -L$(BOOSTLIB)
 
-OBJS= predict_firstarrivals.o 
+OBJS= predict_firstarrivals.o
 $(BIN) : $(OBJS)
 	$(RM) $@
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)

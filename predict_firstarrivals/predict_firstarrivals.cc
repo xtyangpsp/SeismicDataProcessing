@@ -24,12 +24,12 @@ BRTT Antelope functions used:
 #include <list>
 #include "tt.h"
 #include "db.h"
-#include "coords.h"  //dist() function
+//#include "coords.h"  //dist() function
 #include "stock.h"
 #include "tt.h"
 #include "seispp.h"
 #include "dbpp.h"
-
+#include "geo_distance.cc" //for computing distances.
 using namespace std;
 using namespace SEISPP;
 
@@ -300,18 +300,20 @@ int main(int argc, char **argv)
         
         double otime, sctime_on, sctime_off; //otime: origin time; sctime_on: site chan ontime; sctime_off: site chan offtime.
         double olat,olon,odepth,slat,slon; //locations of the event and the site.
-        double  distance(0.0), phtimes(0.0),ftemp(0.0);
+        double  distance, phtimes,ftemp;
 //        long newrowidx;
         cout <<">>++++++++++++++++++++++++++++++"<<endl;
         
     //     for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
-        for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
+        for(i=0,dbin_event.rewind();i<3;++i,++dbin_event)
         {
             cout <<"> Working on orid: "<<dbin_event.get_int("orid")<<" ... "<<i+1<<" of "<<nevent<<""<<endl;
-            otime=dbin_event.get_double("time");
-            olat=dbin_event.get_double("lat");
-            olon=dbin_event.get_double("lon");
-            odepth=dbin_event.get_double("depth");
+            otime=dbin_event.get_double("origin.time");
+            olat=dbin_event.get_double("origin.lat");
+            olon=dbin_event.get_double("origin.lon");
+            odepth=dbin_event.get_double("origin.depth");
+            
+//             Hypocenter hypo(olat,olon,odepth,otime,"tttaup","iasp91");
     //        cout << strtime(otime) << endl;
             
 //            DatascopeHandle dbin_site_temp(dbin_site);
@@ -343,9 +345,10 @@ int main(int argc, char **argv)
                     slon=dbin_site.get_double("lon");
                     
                     //get great circle distance.
-                    dist(olat,olon,slat,slon,&distance,&ftemp);
-                    //convert to degrees from radians.
-                    distance=distance*180.0/PI;
+//                     cout<<"event: lat "<<olat<<", lon "<<olon
+// 							<<"; site: lat "<<slat<<", lon "<<slon<<endl;
+
+                    distance=deg(vincenty_distance(olat,olon,slat,slon)/earth_radius_km);
                     
                     //get phase time.
                     if (phasename == "P" || phasename == "p")
@@ -358,7 +361,8 @@ int main(int argc, char **argv)
                         phasename="S";
                         phtimes = sphasetime(distance,odepth);
                     }
-                    
+                    //debug
+                    //cout<<"traveltime: "<<phtimes<<", dist: "<<distance<<", depth: "<<odepth<<endl;
         //            printf("%10.3f  %10.3f  %10.3f\n",phtimes,distance,odepth);
         //            cout<<phtimes+otime<<endl;
         //            cout<<epoch2str(phtimes+otime,"%Y%j")<<endl;
