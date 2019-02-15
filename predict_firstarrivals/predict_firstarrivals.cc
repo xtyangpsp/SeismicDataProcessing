@@ -24,12 +24,10 @@ BRTT Antelope functions used:
 #include <list>
 #include "tt.h"
 #include "db.h"
-//#include "coords.h"  //dist() function
 #include "stock.h"
-#include "tt.h"
 #include "seispp.h"
 #include "dbpp.h"
-#include "geo_distance.cc" //for computing distances.
+#include "Hypocenter.h"
 using namespace std;
 using namespace SEISPP;
 
@@ -38,14 +36,15 @@ const double PI(3.141592653);
 void history_current()
 {
 	cout<<"Feb 11-12, 2019: created"<<endl
+	cout<<"Feb 15, 2019: added assoc table output. debugged Hypocenter object, using rad()."<<endl
 	<<endl;
 }
 
-const string csversion("v1.0");
+const string csversion("v1.1");
 
 void version()
 {
-	cerr <<"< version "<<csversion<<" > 2/12/2019"<<endl;
+	cerr <<"< version "<<csversion<<" > 2/15/2019"<<endl;
 }
 void author()
 {
@@ -55,9 +54,10 @@ void usage_message()
 {
     version();
     cerr << "predict_firstarrivals eventdb sitedb arrivaldbout "<<endl
-	 << "      [-ph phasename][-ss site_subset][-os origin_subset][-continue][-v|V][-h|H]"<<endl;
+	 << "      [-ph phasename][-ss site_subset][-os origin_subset][-noassoc][-continue][-v|V][-h|H]"<<endl;
     cerr << "** Use -h to print out detailed explanations on the options."<<endl
-         << "** Only mark arrivals on *Z channels."<<endl;
+         << "** Only mark arrivals on *Z channels."<<endl
+         << "** Default will save assoc table. Use -noassoc to only save arrival table."<<endl;
     author();
 }
 void help()
@@ -74,6 +74,8 @@ void help()
         <<"                 Subset for vertical channels is built-in in the code."<<endl
         <<"-os origin_subset: "<<endl
         <<"                 Subset condition for origin table."<<endl
+        <<"-noassoc: "<<endl
+        <<"                 Only saves arrival table. By default, the program saves assoc table."<<endl
         <<"-continue: "<<endl
         <<"                 When arrivaldbout is NOT empty. They program will "<<endl
         <<"                 contrinue adding to it without asking the user! Be cautious!!!"<<endl
@@ -128,6 +130,7 @@ int main(int argc, char **argv)
 		outdb_name=argv[3];
 	}
     bool save_to_text_file(false);
+    bool saveassoctable(true);
     string outfname("predicted_arrivals_summary.txt");
 
     bool apply_site_subset(false), apply_origin_subset(false);
@@ -153,6 +156,10 @@ int main(int argc, char **argv)
         		//choose either continue on the next station or quit.
         		// Xiaotao Yang
         		*/
+        }
+        else if(sarg=="-noassoc")
+        {
+        	saveassoctable=false;
         }
         else if(sarg=="-ph") //specify phases: P or S
         {
@@ -301,19 +308,21 @@ int main(int argc, char **argv)
         double otime, sctime_on, sctime_off; //otime: origin time; sctime_on: site chan ontime; sctime_off: site chan offtime.
         double olat,olon,odepth,slat,slon; //locations of the event and the site.
         double  distance, phtimes,ftemp;
-//        long newrowidx;
+       	long orid;
         cout <<">>++++++++++++++++++++++++++++++"<<endl;
         
     //     for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
         for(i=0,dbin_event.rewind();i<nevent;++i,++dbin_event)
         {
-            cout <<"> Working on orid: "<<dbin_event.get_int("orid")<<" ... "<<i+1<<" of "<<nevent<<""<<endl;
+        	orid=dbin_event.get_int("orid");
+            cout <<"> Working on orid: "<<orid<<" ... "<<i+1<<" of "<<nevent<<""<<endl;
             otime=dbin_event.get_double("origin.time");
-            olat=dbin_event.get_double("origin.lat");
-            olon=dbin_event.get_double("origin.lon");
+            olat=rad(dbin_event.get_double("origin.lat"));
+            olon=rad(dbin_event.get_double("origin.lon"));
             odepth=dbin_event.get_double("origin.depth");
             
-//             Hypocenter hypo(olat,olon,odepth,otime,"tttaup","iasp91");
+			Hypocenter hypo(olat,olon,odepth,otime,
+				string("tttaup"),string("iasp91"));
     //        cout << strtime(otime) << endl;
             
 //            DatascopeHandle dbin_site_temp(dbin_site);
@@ -341,15 +350,14 @@ int main(int argc, char **argv)
                 {
                     zchan=dbin_site.get_string("chan");
     //                if (SEISPP_verbose) cout<<zchan<<endl;
-                    slat=dbin_site.get_double("lat");
-                    slon=dbin_site.get_double("lon");
+                    slat=rad(dbin_site.get_double("lat"));
+                    slon=rad(dbin_site.get_double("lon"));
                     
                     //get great circle distance.
 //                     cout<<"event: lat "<<olat<<", lon "<<olon
 // 							<<"; site: lat "<<slat<<", lon "<<slon<<endl;
 
-                    distance=deg(vincenty_distance(olat,olon,slat,slon)/earth_radius_km);
-                    
+                    distance=deg(hypo.distance(slat,slon));
                     //get phase time.
                     if (phasename == "P" || phasename == "p")
                     {
@@ -376,6 +384,21 @@ int main(int argc, char **argv)
                     dbout.put("jdate",yearday(phtimes+otime));
                     dbout.put("iphase",phasename);
                     dbout.put("auth","predicted");
+                    
+                    if (saveassoctable)
+                    {// write out to assoc table
+						dbout.lookup("assoc");
+						dbout.append();
+	//                    cout<<newrowidx<<endl;
+						dbout.put("sta",dbin_site.get_string("sta"));
+						dbout.put("timeres",0.0);
+						dbout.put("arid",arid);
+						dbout.put("orid",orid);
+						dbout.put("delta",distance);
+						dbout.put("seaz",deg(hypo.seaz(slat,slon)));
+						dbout.put("esaz",deg(hypo.esaz(slat,slon)));
+						dbout.put("phase",phasename);
+					}
                     
                     ++arid;
                 }
