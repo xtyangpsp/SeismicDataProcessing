@@ -36,7 +36,7 @@ const double PI(3.141592653);
 void history_current()
 {
 	cout<<"Feb 11-12, 2019: created"<<endl
-	cout<<"Feb 15, 2019: added assoc table output. debugged Hypocenter object, using rad()."<<endl
+	<<"Feb 15, 2019: added assoc table output. debugged Hypocenter object, using rad()."<<endl
 	<<endl;
 }
 
