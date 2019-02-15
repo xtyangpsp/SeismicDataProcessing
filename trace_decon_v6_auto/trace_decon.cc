@@ -886,6 +886,7 @@ int main(int argc, char **argv)
 
 					regular_gather=BuildRegularGather(*rawdata_filt, dbhm,rdef,target_dt,
 							processing_twin);
+					cout << "num_gather:" <<regular_gather->member.size()<<endl;
 					for(int i=0;i<num_gather;i++)
 					{
 						if(regular_gather->member[i].ns<time_shift)
@@ -933,6 +934,8 @@ int main(int argc, char **argv)
 			delete rawdata_filt;
             
 			num_gather=regular_gather->member.size();
+			//
+			cout << "num_gather:" <<regular_gather->member.size()<<endl;
 			int maxns=0;
 			for(int i=0;i<num_gather;i++)
 			{
