@@ -93,16 +93,20 @@ list<long> LoadArrivalTimes(vector<ThreeComponentSeismogram>& dat,
 	long i;
 	list<long> data_with_arrivals;
 	const string base_error("Warning (LoadArrivalTimes): ");
+	cout <<"num of input gathers (arrival): "<<dat.size()<<endl;
 	for(d=dat.begin(),i=0;d!=dat.end();++d,++i)
 	{
 		double atime;  //  arrival time.  
 		if(d->live)
 		{
+		cout <<"station: "<<d->get_string("sta")<<endl;
+// 		cout <<"arrival time: "<<d->get_double("arrival.time")<<endl;
 		// First see if there is an arrival for this
 		// station.  If not, skip it. 
 			list<long> records
 				=dbh.find(dynamic_cast<Metadata&>(*d),false);
 			// if no arrival silently skip data for this station
+			cout <<"num of arrivals: "<<records.size()<<endl;
 			if(records.size()<=0) continue;
 			if(records.size()>1)
 			{
@@ -151,15 +155,18 @@ ThreeComponentEnsemble *BuildRegularGather(ThreeComponentEnsemble& raw,
 	shared_ptr<TimeSeries> x1,x2,x3;
 	ThreeComponentEnsemble *result;
 	result = new ThreeComponentEnsemble(raw);
+	cout <<"num of input gathers: "<<raw.member.size()<<endl;
 	// An inefficiency here, but this allow us to discard dead
 	// traces and problem data from ensemble as we assemble the
 	// new one.
 	result->member.clear();
 	result->member.reserve(raw.member.size());
+// 	cout <<"num of reserved gathers: "<<result->member.size()<<endl;
 	// Load arrivals from database.  List returned is index into raw of
 	// data with valid arrivals loaded
 	list<long> data_with_arrivals;
         data_with_arrivals=LoadArrivalTimes(raw.member,dbh,arrival_keyword);
+        cout <<"num of arrival gathers: "<<data_with_arrivals.size()<<endl;
 	list<long>::iterator index;
 	for(index=data_with_arrivals.begin();index!=data_with_arrivals.end();++index)
 	{
@@ -794,7 +801,7 @@ int main(int argc, char **argv)
 				if(idst==dbhv.get_long(string("evid")))
 					break;
 			}
-			++dbhv;
+// 			++dbhv;
 			cout<<"First evid to be process is "<<dbhv.get_long(string("evid"))<<endl;
 		}
 		long recordnum=dbhv.number_tuples()-dbhv.current_record();
@@ -873,6 +880,7 @@ int main(int argc, char **argv)
 					PostEvid(rawdata_filt,evid);
 
 					num_gather=rawdata_filt->member.size();
+					cout << "num_gather1:" <<num_gather<<endl;
 					for(int i=0;i<num_gather;i++)
 					{
 						double lat=stations->array[rawdata_filt->member[i].get_string("sta")].lat;
@@ -886,7 +894,7 @@ int main(int argc, char **argv)
 
 					regular_gather=BuildRegularGather(*rawdata_filt, dbhm,rdef,target_dt,
 							processing_twin);
-					cout << "num_gather:" <<regular_gather->member.size()<<endl;
+					cout << "num_gather2:" <<regular_gather->member.size()<<endl;
 					for(int i=0;i<num_gather;i++)
 					{
 						if(regular_gather->member[i].ns<time_shift)
@@ -935,7 +943,7 @@ int main(int argc, char **argv)
             
 			num_gather=regular_gather->member.size();
 			//
-			cout << "num_gather:" <<regular_gather->member.size()<<endl;
+			cout << "num_gather3:" <<regular_gather->member.size()<<endl;
 			int maxns=0;
 			for(int i=0;i<num_gather;i++)
 			{
