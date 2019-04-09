@@ -40,6 +40,14 @@ Feb, 2015 by Xiaotao Yang
 	1. add functionality to calculate the trace SNR after rotation and before deconvolution.
 		however, rotation is optional. SNR attribute will be added in the decon table as 
 		"rawsnr" attribute.
+April 9, 2019 by Xiaotao Yang
+    1. Debugged in LoadArrivals(). Changed dbh.find(*,boollean) the second argument to true.
+        Otherwise, it can't find the arrival data. Not sure why, guess it probably ralated to
+        naming convension (full name or not).
+    2. Changed the program to start from exact the evid specified by argument -n. The previous
+        version starts from the next evid.
+ FUTURE IDEAS:
+    1. Embed metadata list.
 
 */
 
@@ -89,24 +97,29 @@ list<long> LoadArrivalTimes(vector<ThreeComponentSeismogram>& dat,
                 DatascopeMatchHandle& dbh,
 		    const string keyword)
 {
-        std::vector<ThreeComponentSeismogram>::iterator d;
+    std::vector<ThreeComponentSeismogram>::iterator d;
 	long i;
 	list<long> data_with_arrivals;
 	const string base_error("Warning (LoadArrivalTimes): ");
 	cout <<"num of input gathers (arrival): "<<dat.size()<<endl;
 	for(d=dat.begin(),i=0;d!=dat.end();++d,++i)
 	{
-		double atime;  //  arrival time.  
+		double atime;  //  arrival time.
 		if(d->live)
 		{
-		cout <<"station: "<<d->get_string("sta")<<endl;
-// 		cout <<"arrival time: "<<d->get_double("arrival.time")<<endl;
+//            cout <<"station: "<<d->get_string("sta")<<endl;
+//            cout <<"evid: "<<d->get_int("evid")<<endl;
+            //cout <<"atime: "<<d->get_double("arrival.time")<<endl;
 		// First see if there is an arrival for this
 		// station.  If not, skip it. 
 			list<long> records
-				=dbh.find(dynamic_cast<Metadata&>(*d),false);
+            =dbh.find(dynamic_cast<Metadata&>(*d),true);
+            // dbh.find(*,boolean): the boolean argument has to be true. Otherwise
+            //the program doesn't find the matched arrival data.
+            // Noted by Xiaotao Yang on April 9, 2019
+            
 			// if no arrival silently skip data for this station
-			cout <<"num of arrivals: "<<records.size()<<endl;
+//            cout <<"num of arrivals: "<<records.size()<<endl;
 			if(records.size()<=0) continue;
 			if(records.size()>1)
 			{
@@ -119,12 +132,12 @@ list<long> LoadArrivalTimes(vector<ThreeComponentSeismogram>& dat,
 					<< "Using first found "
 					<< "in database view"<<endl;
 			}
-			Dbptr db=dbh.db;
+            Dbptr db=dbh.db;
 			// tricky usage here.  begin() returns
 			// an iterator so the * operator gets the
 			// value = record number of the match
 			db.record=*(records.begin());
-			char csta[10];
+            char csta[10];
 			if(dbgetv(db,0,"arrival.time",&atime,"sta",csta,0)
 				== dbINVALID) 
 			{
@@ -155,7 +168,7 @@ ThreeComponentEnsemble *BuildRegularGather(ThreeComponentEnsemble& raw,
 	shared_ptr<TimeSeries> x1,x2,x3;
 	ThreeComponentEnsemble *result;
 	result = new ThreeComponentEnsemble(raw);
-	cout <<"num of input gathers: "<<raw.member.size()<<endl;
+//    cout <<"num of input gathers: "<<raw.member.size()<<endl;
 	// An inefficiency here, but this allow us to discard dead
 	// traces and problem data from ensemble as we assemble the
 	// new one.
@@ -166,7 +179,7 @@ ThreeComponentEnsemble *BuildRegularGather(ThreeComponentEnsemble& raw,
 	// data with valid arrivals loaded
 	list<long> data_with_arrivals;
         data_with_arrivals=LoadArrivalTimes(raw.member,dbh,arrival_keyword);
-        cout <<"num of arrival gathers: "<<data_with_arrivals.size()<<endl;
+//        cout <<"num of arrival gathers: "<<data_with_arrivals.size()<<endl;
 	list<long>::iterator index;
 	for(index=data_with_arrivals.begin();index!=data_with_arrivals.end();++index)
 	{
@@ -648,7 +661,7 @@ unsigned int nextPowerOf2(unsigned int n)
 }
 void usage()
 {
-	cerr << "Version: 2015.12.01" <<endl;
+	cerr << "Version: 2019.04.09" <<endl;
 	cerr << "trace_decon db [-d output_dir -o outputdb -n start_evid -pf pfname]" << endl;
 	exit(-1);
 }
@@ -807,7 +820,8 @@ int main(int argc, char **argv)
 		long recordnum=dbhv.number_tuples()-dbhv.current_record();
         //for now, test only!!
         //for(int i=0;i<514;i++) ++dbhv;
-		for(record=0;record<recordnum;++record,++dbhv)
+        for(record=0;record<recordnum;++record,++dbhv)
+//        for(record=0;record<1;++record,++dbhv) // debug
 		{
 			int num_gather;
 			lat=dbhv.get_double(string("origin.lat"));
@@ -880,7 +894,7 @@ int main(int argc, char **argv)
 					PostEvid(rawdata_filt,evid);
 
 					num_gather=rawdata_filt->member.size();
-					cout << "num_gather1:" <<num_gather<<endl;
+//                    cout << "num_gather1:" <<num_gather<<endl;
 					for(int i=0;i<num_gather;i++)
 					{
 						double lat=stations->array[rawdata_filt->member[i].get_string("sta")].lat;
@@ -894,7 +908,7 @@ int main(int argc, char **argv)
 
 					regular_gather=BuildRegularGather(*rawdata_filt, dbhm,rdef,target_dt,
 							processing_twin);
-					cout << "num_gather2:" <<regular_gather->member.size()<<endl;
+//                    cout << "num_gather2:" <<regular_gather->member.size()<<endl;
 					for(int i=0;i<num_gather;i++)
 					{
 						if(regular_gather->member[i].ns<time_shift)
@@ -943,7 +957,7 @@ int main(int argc, char **argv)
             
 			num_gather=regular_gather->member.size();
 			//
-			cout << "num_gather3:" <<regular_gather->member.size()<<endl;
+//            cout << "num_gather3:" <<regular_gather->member.size()<<endl;
 			int maxns=0;
 			for(int i=0;i<num_gather;i++)
 			{
