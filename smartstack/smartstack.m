@@ -5,7 +5,7 @@ function [dout, w]= smartstack(din,varargin)
 %
 maxite = 100; % stop RobustSNR stacking when reaches this number of iterations.
 
-stacktype='mean'; %specify as: mean, median, robust
+stacktype='robust'; %specify as: mean, median, robust
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% temporary block for testing purpose
 % load('datafortest.mat');
@@ -35,7 +35,7 @@ numvarargin=length(varargin);
 for nar=1:numvarargin
     if strcmp(varargin{nar},'stacktype')
        if nar+1>numvarargin
-           error('** need to specify stacktype as: mean [default], median, OR robustsnr!');
+           error('** need to specify stacktype as: mean , median, OR robust [default]!');
        else
            stacktype=varargin{nar+1};
        end
