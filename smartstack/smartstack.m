@@ -1,7 +1,9 @@
 % stack
 function [dout, w]= smartstack(din,varargin)
 %Robust stacking scheme is based on Pavlis and Vernon,
-%Computers & Geosciences, 2011.
+%Computers & Geosciences, 2010.
+%
+%Wrote by: Xiaotao Yang July 2019
 %
 maxite = 100; % stop RobustSNR stacking when reaches this number of iterations.
 
