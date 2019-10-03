@@ -89,32 +89,37 @@ set(gca,'TickDir','out','fontsize',14)
 saveas(gca,'smartstack_example.png','png')
 
 %% plot spectrum of the traces
-myylim=[0.01 2.5];
+zeroerror=dt/100; % used to define whether the timeflag is zero, bounded by -1*thisvalue and 1*thisvalue.
+zeroidx=find(timeflag(:,1) > -1.0*zeroerror & timeflag(:,1) < zeroerror);
+% itmax=round((300 - timeflag(1))/dt);
+
+specwind=100;
+myylim=[0.027 2.5];
 figure('position',[400 400 950 600])
 subplot(2,2,1)
-dref=din(:,reftraceid)/max(abs(din(:,reftraceid)));
-spectrogram(dref,300,150,600,5,'yaxis');ax=gca;ax.YScale = 'log';
+dref=din(zeroidx:itmax,reftraceid)/max(abs(din(zeroidx:itmax,reftraceid)));
+spectrogram(dref,specwind,specwind/2,specwind*2,1/dt,'yaxis');ax=gca;ax.YScale = 'log';
 ylim(myylim)
 title('Reference trace');
 set(gca,'FontSize',14)
 
 subplot(2,2,2)
-dmeantemp=dmean/max(abs(dmean));
-spectrogram(dmean,300,150,300,5,'yaxis');ax=gca;ax.YScale = 'log';
+dmeantemp=dmean(zeroidx:itmax)/max(abs(dmean(zeroidx:itmax)));
+spectrogram(dmeantemp,specwind,specwind/2,specwind*2,1/dt,'yaxis');ax=gca;ax.YScale = 'log';
 title('Mean stack');
 ylim(myylim)
 set(gca,'FontSize',14)
 
 subplot(2,2,3)
-dmediantemp=dmedian/max(abs(dmedian));
-spectrogram(dmediantemp,300,150,300,5,'yaxis');ax=gca;ax.YScale = 'log';
+dmediantemp=dmedian(zeroidx:itmax)/max(abs(dmedian(zeroidx:itmax)));
+spectrogram(dmediantemp,specwind,specwind/2,specwind*2,1/dt,'yaxis');ax=gca;ax.YScale = 'log';
 title('Median');
 ylim(myylim)
 set(gca,'FontSize',14)
 
 subplot(2,2,4)
-drobusttemp=drobust/max(abs(drobust));
-spectrogram(drobusttemp,300,150,600,5,'yaxis');ax=gca;ax.YScale = 'log';
+drobusttemp=drobust(zeroidx:itmax)/max(abs(drobust(zeroidx:itmax)));
+spectrogram(drobusttemp,specwind,specwind/2,specwind*2,1/dt,'yaxis');ax=gca;ax.YScale = 'log';
 title('Robust stack');
 ylim(myylim)
 set(gca,'FontSize',14)
