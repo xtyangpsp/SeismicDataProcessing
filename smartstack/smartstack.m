@@ -7,7 +7,7 @@ function [dout, w]= smartstack(din,varargin)
 %
 maxite = 100; % stop RobustSNR stacking when reaches this number of iterations.
 
-stacktype='robust'; %specify as: mean, median, robust
+stacktype='coherence'; %specify as: mean, median, robust
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% temporary block for testing purpose
 % load('datafortest.mat');
@@ -32,7 +32,7 @@ smallnumber = 0.00001; %used to mark convergence when the stack beam changes les
 %Computers & Geosciences, 2011 for details.
 largenumber = 10000; %used as the intial value of model norm.
 stackdim = 2;
-
+verbose=0;
 numvarargin=length(varargin);
 for nar=1:numvarargin
     if strcmp(varargin{nar},'stacktype')
@@ -62,6 +62,8 @@ for nar=1:numvarargin
        else
            stackdim=varargin{nar+1};
        end
+    elseif strcmp(varargin{nar},'verbose')
+       verbose=1;
     end
 end
 
@@ -72,8 +74,8 @@ switch stackdim
         [nsamp,ndata]=size(din);
 end
 
-if (strcmp(stacktype,'robust') && isempty(stackwinidx)) 
-    warning('stackwinidx not specified, use the whole data length instead!');
+if (strcmp(stacktype,'robust') || strcmp(stacktype,'coherence')) && isempty(stackwinidx) 
+    if verbose;warning('stackwinidx not specified, use the whole data length instead!');end
     stackwinidx=[1,nsamp];
 end
 if ~isempty(stackwinidx)
@@ -112,8 +114,9 @@ elseif strcmp(stacktype,'robust')
             else                
                 ampscale(i)=abs(dot(s,dtemp));
                 d = norm(dtemp);
-                r = norm(dtemp - dot(s,dtemp).*s);
+                r = norm(dtemp - dot(s,dtemp).*s);%norm(dtemp - (ampscale(i)/abs(dot(dtemp,dtemp)))*s) + 1; %norm(dtemp - dot(s,dtemp).*s);
                 w(i) = ampscale(i)./(d.*r);
+%                 w(i) = w(i)^2;
             end
         end
         
@@ -139,6 +142,57 @@ elseif strcmp(stacktype,'robust')
                 dout = dout + w(j)*din(:,j);
             end
     end
+elseif strcmp(stacktype,'coherence')
+    switch stackdim
+        case 1
+            data=din(:,idmin:idmax);
+            data = data';
+            dout=zeros(1,nsamp);
+        case 2
+            data=din(idmin:idmax,:);
+            dout=zeros(nsamp,1);
+    end
+    s = nanmedian(data,2); %start from median stack.
+    
+    %get initial deltad: left hand side term in Pavlis and Vernon, equation (6)
+    deltad = largenumber;
+    itecount = 0;
+    w = zeros(ndata,1);
+%     ampscale = zeros(ndata,1);
+    while deltad > smallnumber && itecount < maxite
+        for i = 1:ndata
+            dtemp = data(:,i);
+            if range(dtemp) == 0 || ~isempty(find(isnan(dtemp),1))
+                w(i) = 0; % for zero trace or NaN trace, use zero weight.
+            else       
+                ce=corrcoef(s,dtemp);
+                w(i) = ce(1,2)*heaviside(ce(1,2));
+            end
+        end
+        
+        % normalize weight
+        w=w./nansum(w);
+        stemp = zeros(idmax - idmin +1,1);
+        for i = 1:ndata
+            stemp = stemp + w(i)*data(:,i);
+        end
+        slast = s;
+        s = stemp;
+        deltad = norm(s - slast,1)/(norm(s)*nsamp);
+        itecount = itecount + 1;
+    end
+    
+    switch stackdim
+        case 1
+            for j = 1:ndata
+                dout = dout + w(j)*din(j,:);
+            end
+        case 2
+            for j = 1:ndata
+                dout = dout + w(j)*din(:,j);
+            end
+    end
+%     itecount - 1
 end
 
 return;
