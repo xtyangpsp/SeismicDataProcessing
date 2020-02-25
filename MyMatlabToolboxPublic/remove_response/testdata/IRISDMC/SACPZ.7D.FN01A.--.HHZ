@@ -1,0 +1,42 @@
+* **********************************
+* NETWORK   (KNETWK): 7D
+* STATION    (KSTNM): FN01A
+* LOCATION   (KHOLE): 
+* CHANNEL   (KCMPNM): HHZ
+* CREATED           : 2020-02-14T19:25:26
+* START             : 2011-07-27T20:15:00
+* END               : 2012-07-21T00:00:17
+* DESCRIPTION       : 
+* LATITUDE          : 46.882000
+* LONGITUDE         : -124.333702
+* ELEVATION         : -54.0
+* DEPTH             : 0.0
+* DIP               : 0.0
+* AZIMUTH           : 0.0
+* SAMPLE RATE       : 125.0
+* INPUT UNIT        : M
+* OUTPUT UNIT       : COUNTS
+* INSTTYPE          : Nanometrics Trillium Compact Response/LDEO OBS 201
+* INSTGAIN          : 7.476820e+02 (M)
+* COMMENT           : 
+* SENSITIVITY       : 9.711880e+08 (M)
+* A0                : 8.198430e+11
+* **********************************
+ZEROS	4
+	+0.000000e+00	+0.000000e+00	
+	+0.000000e+00	+0.000000e+00	
+	+0.000000e+00	+0.000000e+00	
+	-4.341000e+02	+0.000000e+00	
+POLES	7
+	-3.691000e-02	+3.712000e-02	
+	-3.691000e-02	-3.712000e-02	
+	-3.712000e+02	+0.000000e+00	
+	-3.739000e+02	+4.755000e+02	
+	-3.739000e+02	-4.755000e+02	
+	-5.884000e+02	+1.508000e+03	
+	-5.884000e+02	-1.508000e+03	
+CONSTANT	7.962217e+20
+
+
+
+
