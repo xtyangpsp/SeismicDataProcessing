@@ -12,6 +12,8 @@ figflag=1;
 if nargin < 5
     error('Not enough input arguments!');
 elseif nargin==5
+    figflag=0;
+else
     figflag=plotfig;
 end
 if ~exist(outdir,'dir')
