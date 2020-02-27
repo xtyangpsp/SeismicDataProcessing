@@ -33,22 +33,25 @@ if mod(N,2)
 else
      faxis = [0:N/2,-N/2+1:-1]*(1/T);
 end
-
-%%%%%%%%%%
-% My edits haj
-%%%%%%%%%%
-
+zeros=[];
+poles=[];
+gain=[];
 if pzexist == 1
     [zz,pp,constant] = read_sac_pole_zero(pzfn_good);
 
     zeros=zz;
     poles=pp;
     gain=constant;
+else
+    outtrace = intrace;
+    outtrace.DATA1 = nan(size(intrace.DATA1));
+    warning(['No response file for ',intrace.FILENAME]);
+    return
 end
 
 w = faxis.*2*pi;
 resp = ones(size(w));
-if isempty(zeros) == 1
+if isempty(zeros)
     zeros = 0;
 end
 for ip = 1:length(poles)
@@ -83,7 +86,7 @@ data_cor = real(ifft(fftdata));
 outtrace = intrace;
 outtrace.DATA1 = data_cor;
 
-disp(['Station: ',intrace.KSTNM,'.',intrace.KCMPNM,' deconv to ',num2str(intrace.IDEP)]);
+disp(['Removed response for: ',intrace.KSTNM,'.',intrace.KCMPNM]);
 
 return
 

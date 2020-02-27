@@ -3,21 +3,34 @@
 %files.
 %It calls individual function to process each sac file.
 %
-datadir='testdata';
-respdir=strcat(datadir,'/IRISDMC');
-
+function rm_resp_wrapper(datadir,respdir,outdir,freqmin,npoles,plotfig)
+% datadir='testdata';
+% respdir=strcat(datadir,'/IRISDMC');
+% npoles=2;
+% freqmin=0.01;
+figflag=1;
+if nargin < 5
+    error('Not enough input arguments!');
+elseif nargin==5
+    figflag=plotfig;
+end
+if ~exist(outdir,'dir')
+    system(['mkdir ' outdir]);
+end
 allfiles1=dir([datadir, '/*.sac']);
 allfiles2=dir([datadir, '/*.SAC']);
-allfiles=[allfiles1;allfiles2];
+allfiles_temp=[allfiles1;allfiles2];
+allfiles=cell(size(allfiles_temp));
+for j=1:size(allfiles_temp,1)
+    allfiles{j}=allfiles_temp(j).name;
+end
+allfiles_unique=unique(allfiles);
+nfiles=size(allfiles_unique,1);
 
-nfiles=size(allfiles,1);
-npoles=2;
-freqmin=0.01;
-figflag=1;
 for i=1:nfiles
     % read EGF file
     
-    filename=allfiles(i).name; 
+    filename=allfiles_unique{i}; 
     
     intrace=readsac([datadir,'/',filename]);
     
@@ -26,9 +39,11 @@ for i=1:nfiles
     intrace.DATA1=detrend(dtemp-nanmean(dtemp));
     outtrace=rm_resp_sac(intrace,freqmin,npoles,respdir,'SACPZ','.');
     
-    outtrace.FILENAME = strcat(datadir,'/',intrace.FILENAME,'_test');
+    outtrace.FILENAME = strcat(outdir,'/',intrace.FILENAME,'_test');
     
-    writesac(outtrace);
+    if ~writesac(outtrace)
+        error(['Failed to save: ' outtrace.FILENAME '. Make sure the directory exists!']);
+    end
     
     if figflag
         dt=intrace.DELTA;
@@ -58,3 +73,5 @@ for i=1:nfiles
 end
 
 disp(['Removed responses from ',num2str(nfiles),' SAC files']);
+end
+
