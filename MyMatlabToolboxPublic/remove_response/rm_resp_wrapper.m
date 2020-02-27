@@ -39,7 +39,7 @@ for i=1:nfiles
     intrace.DATA1=detrend(dtemp-nanmean(dtemp));
     outtrace=rm_resp_sac(intrace,freqmin,npoles,respdir,'SACPZ','.');
     
-    outtrace.FILENAME = strcat(outdir,'/',intrace.FILENAME,'_test');
+    outtrace.FILENAME = strcat(outdir,'/',intrace.FILENAME);
     
     if ~writesac(outtrace)
         error(['Failed to save: ' outtrace.FILENAME '. Make sure the directory exists!']);
