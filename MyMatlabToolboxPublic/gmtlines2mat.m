@@ -1,4 +1,4 @@
-function gmtlines2mat(infilebaselist)
+function lineinfo=gmtlines2mat(infilebaselist)
 %this program converts gmt formated line segments to matlab *.MAT file. the
 %resultant *.MAT file is a cell array containing all of the line segments.
 %
@@ -21,8 +21,7 @@ for m = 1:length(infilebaselist)
     while ischar(dline)
         if ~strcmp(dline(1),'#')
             clear idxc;
-            idxc=strfind(dline,'>');
-            if ~isempty(idxc)
+            if contains(dline,'>')
                if nseg>0
     %                nseg
                    lineinfo{nseg}.tag=tag;
@@ -32,8 +31,12 @@ for m = 1:length(infilebaselist)
                end
                nseg=nseg+1;
                clear idxs;
-               idxs=strfind(dline,'"');
-               tag=dline(idxs(1)+1:idxs(2)-1);
+               idxs=strfind(dline,'>');
+               if ~isempty(idxs)
+                   tag=dline(idxs+1:end);
+               else
+                   tag='label';
+               end
                i=1; %start count data
                clear data0;
             else
@@ -51,7 +54,6 @@ for m = 1:length(infilebaselist)
             lineinfo{nseg}.data=data0;
        end
     end
-
     save(outfilename,'lineinfo');
 end
 

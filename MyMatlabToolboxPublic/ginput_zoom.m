@@ -32,13 +32,13 @@ ymax = ylim;   % get max y
 xlim(ox);      % restore x limit
 ylim(oy);      % restore y limit
 
-if exist('style') == 0
+if exist('style','var') == 0
     style = 'crosshair';
 end
 
 set(gcf,'pointer', style);  % use fullcross, user can change this
 
-if exist('n') == 0
+if exist('n','var') == 0
     n = 100000;
 end
 
